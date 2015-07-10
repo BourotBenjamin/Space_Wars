@@ -21,17 +21,68 @@ NetworkClient& Server::initClient(SOCKET csock)
 
 void Server::newClientConnection(NetworkClient* client)
 {
-	send(client->sock, (std::string("N") + std::to_string(nb_clients) + 
-			std::string("-") + std::to_string(client->x) + 
-			std::string("-") + std::to_string(client->y) + 
-			std::string("-") + std::to_string(client->angle)
-		).c_str(), 46, 0);
+	sendOneClientCoordToAllClients(client);
+}
+
+void Server::sendAllClientsCoordToAllClients()
+{
+	for each (NetworkClient c in clients)
+	{
+		sendOneClientCoordToAllClients(&c);
+	}
+}
+
+void Server::sendOneClientCoordToAllClients(NetworkClient* client)
+{
+	sendMessageToAllClients(createCoordMessage(client));
+}
+
+void Server::sendAllClientsCoordToOneClient(NetworkClient* listener)
+{
+	for each (NetworkClient c in clients)
+	{
+		sendOneClientCoordToOneClient(&c, listener);
+	}
+}
+
+void Server::sendOneClientCoordToOneClient(NetworkClient* client, NetworkClient* listener)
+{
+	sendMessageToOneClient(listener, createCoordMessage(client));
+}
+
+std::string Server::createCoordMessage(NetworkClient* client)
+{
+	return std::string("P") + std::to_string(client->id) +
+		std::string("-") + std::to_string(client->x) +
+		std::string("-") + std::to_string(client->y) +
+		std::string("-") + std::to_string(client->angle);
+}
+
+void Server::sendMessageToAllClients(std::string message)
+{
+	for each (NetworkClient c in clients)
+	{
+		sendMessageToOneClient(&c, message);
+	}
+}
+
+void Server::sendMessageToOneClient(NetworkClient* listener, std::string message)
+{
+	send(listener->sock, (message).c_str(), message.length(), 0);
 }
 
 DWORD WINAPI Server::createThreadListenOnServer(LPVOID  client)
 {
 	CoupleServerClient* c = (CoupleServerClient*)client;
 	return c->server->listenForMessage(c->client);
+}
+
+void Server::removeClient(NetworkClient* c)
+{
+	sendMessageToAllClients(std::string("X") + std::to_string(c->id));
+	nb_clients--;
+	closesocket(c->sock);
+	clients.remove(*c);
 }
 
 int Server::listenForMessage(NetworkClient* c)
@@ -47,21 +98,24 @@ int Server::listenForMessage(NetworkClient* c)
 			switch (chars[0])
 			{
 			case 'Z':
+				sendMessageToAllClients(std::string("Z") + std::to_string(c->id));
 				break;
 			case 'Q':
+				sendMessageToAllClients(std::string("Q") + std::to_string(c->id));
 				break;
 			case 'S':
+				sendMessageToAllClients(std::string("S") + std::to_string(c->id));
 				break;
 			case 'D':
+				sendMessageToAllClients(std::string("D") + std::to_string(c->id));
 				break;
 			case 'X':
+				removeClient(c);
 				end = true;
 				break;
 			}
 		}
 	}
-	closesocket(c->sock);
-	clients.remove(*c);
 	return 0;
 }
 
