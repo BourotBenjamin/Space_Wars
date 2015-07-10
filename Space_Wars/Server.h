@@ -4,14 +4,26 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <vector>
+#include <sstream>
+#include <memory>
 
 
 
 struct NetworkClient
 {
-	int id, x, y, angle;
+	int id;
+	int x;
+	int y;
+	int z;
+	int angleX;
+	int angleY;
 	SOCKET sock;
 	std::string name;
+	bool ping;
+	int pingAttemps;
+	DWORD threadId;
+	HANDLE threadHandle;
 	bool operator== (NetworkClient const &c)
 	{
 		return c.id == this->id;
@@ -21,34 +33,40 @@ struct NetworkClient
 class Server
 {
 public:
-	void init();
 	Server();
 	~Server();
 private:
+	DWORD pingThreadId;
+	HANDLE pingThreadHandle;
 	SOCKET sock;
-	std::list<NetworkClient> clients;
+	std::list<std::shared_ptr<NetworkClient>> clients;
 	int nb_clients_all_time = 0, nb_clients = 0;
 	char* chars = (char*)malloc(sizeof(char)* 15);
 
-	static DWORD WINAPI Server::createThreadListenOnServer(LPVOID  client);
+	static DWORD WINAPI createThreadListenOnServer(LPVOID  client);
+	static DWORD WINAPI createThreadPingAllClients(LPVOID server);
 
+	void init();
 	void listenForClientsConnections(SOCKADDR_IN sin, SOCKET sock);
-	int listenForMessage(NetworkClient*  client);
-	void newClientConnection(NetworkClient* client);
-	NetworkClient& initClient(SOCKET csock);
-	void Server::removeClient(NetworkClient* c);
+	int listenForMessage(std::shared_ptr<NetworkClient>  client);
+	void newClientConnection(std::shared_ptr<NetworkClient> client);
+	std::shared_ptr<NetworkClient> initClient(SOCKET csock);
+	void removrClientFromList(std::shared_ptr<NetworkClient> c);
+	void removeClientDependencies(std::shared_ptr<NetworkClient> c);
 
-	void sendMessageToOneClient(NetworkClient* listener, std::string message);
+	void sendMessageToOneClient(std::shared_ptr<NetworkClient> listener, std::string message);
 	void sendMessageToAllClients(std::string message);
 
-	std::string createCoordMessage(NetworkClient* client);
-	void sendOneClientCoordToOneClient(NetworkClient* client, NetworkClient* listener);
-	void sendAllClientsCoordToOneClient(NetworkClient* listener);
-	void sendOneClientCoordToAllClients(NetworkClient* c);
+	std::string createCoordMessage(std::shared_ptr<NetworkClient> client);
+	void sendOneClientCoordToOneClient(std::shared_ptr<NetworkClient> client, std::shared_ptr<NetworkClient> listener);
+	void sendAllClientsCoordToOneClient(std::shared_ptr<NetworkClient> listener);
+	void sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> c);
 	void sendAllClientsCoordToAllClients();
+	int Server::pingAllClients();
+	void Server::recivePingFromClient(std::shared_ptr<NetworkClient> c);
 };
 
 struct CoupleServerClient {
 	Server* server;
-	NetworkClient* client;
+	std::shared_ptr<NetworkClient> client;
 };
