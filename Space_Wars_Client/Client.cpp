@@ -35,6 +35,27 @@ void Client::createPlayer(std::string& str)
 	players.push_back(p);
 }
 
+Player* Client::getPlayerAt(int index)
+{
+	for each (Player& p in players)
+	{
+		if (p.id == index)
+			return &p;
+	}
+	return nullptr;
+}
+
+void Client::updatePlayer(std::string& str)
+{
+	std::vector<std::string> elems = split(str, '-');
+	Player* p = getPlayerAt(std::stoi(elems.at(1)));
+	p->x = std::stoi(elems.at(2));
+	p->y = std::stoi(elems.at(3));
+	p->z = std::stoi(elems.at(4));
+	p->angleX = std::stoi(elems.at(5));
+	p->angleY = std::stoi(elems.at(6));
+}
+
 void Client::removePlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
@@ -45,13 +66,13 @@ void Client::removePlayer(std::string& str)
 
 Client::Client()
 {
-	sendMessage("X");
 	init();
 }
 
 
 Client::~Client()
 {
+	sendMessage("X");
 	closesocket(sock);
 	WSACleanup();
 }
@@ -75,14 +96,24 @@ int Client::listenForMessage()
 			char c0 = s.at(0);
 			switch (c0)
 			{
-			case 'P':
+			case 'N':
 				createPlayer(s);
+				break;
+			case 'P':
+				updatePlayer(s);
 				break;
 			case 'X':
 				removePlayer(s);
 				break;
 			case 'H':
 				sendMessage(std::string("H"));
+				break;
+			case 'T':
+				//TODO Fire
+				break;
+			case 'Y':
+				std::vector<std::string> elems = split(s, '-');
+				selfId = std::stoi(elems.at(1));
 				break;
 			}
 			std::cout << s << std::endl;

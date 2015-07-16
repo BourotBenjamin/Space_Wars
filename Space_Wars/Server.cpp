@@ -41,38 +41,44 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 
 void Server::newClientConnection(std::shared_ptr<NetworkClient> client)
 {
-	sendOneClientCoordToAllClients(client);
+	sendOneClientCoordToAllClients(client, true);
+	sendMessageToOneClient(client, std::string("Y-") + std::to_string(client->id))
 }
 
-void Server::sendAllClientsCoordToAllClients()
+void Server::sendAllClientsCoordToAllClients(bool n)
 {
 	for each (auto c in clients)
 	{
-		sendOneClientCoordToAllClients(c);
+		sendOneClientCoordToAllClients(c, n);
 	}
 }
 
-void Server::sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> client)
+void Server::sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> client, bool n)
 {
-	sendMessageToAllClients(createCoordMessage(client));
+	sendMessageToAllClients(createCoordMessage(client, n));
 }
 
-void Server::sendAllClientsCoordToOneClient(std::shared_ptr<NetworkClient> listener)
+void Server::sendAllClientsCoordToOneClient(std::shared_ptr<NetworkClient> listener, bool n)
 {
 	for each (auto c in clients)
 	{
-		sendOneClientCoordToOneClient(c, listener);
+		sendOneClientCoordToOneClient(c, listener, n);
 	}
 }
 
-void Server::sendOneClientCoordToOneClient(std::shared_ptr<NetworkClient> client, std::shared_ptr<NetworkClient> listener)
+void Server::sendOneClientCoordToOneClient(std::shared_ptr<NetworkClient> client, std::shared_ptr<NetworkClient> listener, bool n)
 {
-	sendMessageToOneClient(listener, createCoordMessage(client));
+	sendMessageToOneClient(listener, createCoordMessage(client, n));
 }
 
-std::string Server::createCoordMessage(std::shared_ptr<NetworkClient> client)
+std::string Server::createCoordMessage(std::shared_ptr<NetworkClient> client, bool n)
 {
-	return std::string("P-") + std::to_string(client->id) +
+	std::string s1;
+	if (n)
+		s1 = std::string("N-");
+	else
+		s1 = std::string("P-");
+	return s1 + std::to_string(client->id) +
 		std::string("-") + std::to_string(client->x) +
 		std::string("-") + std::to_string(client->y) +
 		std::string("-") + std::to_string(client->z) +
@@ -108,6 +114,7 @@ DWORD WINAPI Server::createThreadPingAllClients(LPVOID server)
 int Server::pingAllClients()
 {
 	std::vector<std::shared_ptr<NetworkClient>> clientsToRemove = std::vector<std::shared_ptr<NetworkClient>>();
+	int i = 0;
 	while (true)
 	{
 		for each (auto c in clients)
@@ -126,10 +133,16 @@ int Server::pingAllClients()
 		}
 		for each (auto cToRemove in clientsToRemove)
 		{
-			removrClientFromList(cToRemove);
+			removeClientFromList(cToRemove);
 		}
 		clientsToRemove.empty();
 		Sleep(1000);
+		i++;
+		if (i == 3)
+		{
+			i = 0;
+			sendAllClientsCoordToAllClients(false);
+		}
 	}
 	return 0;
 }
@@ -147,7 +160,7 @@ void Server::removeClientDependencies(std::shared_ptr<NetworkClient> c)
 	CloseHandle(c->threadHandle); // Termine le thread listen message for this player
 }
 
-void Server::removrClientFromList(std::shared_ptr<NetworkClient> c)
+void Server::removeClientFromList(std::shared_ptr<NetworkClient> c)
 {
 	clients.remove_if([c](std::shared_ptr<NetworkClient> c2){ return c2->id == c->id; });
 }
@@ -164,24 +177,20 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 		{
 			switch (chars[0])
 			{
-			case 'Z':
-				sendMessageToAllClients(std::string("Z-") + std::to_string(c->id));
+			case 'R':
+				//TODO update rotation 
+				sendOneClientCoordToAllClients(c, false);
 				break;
-			case 'Q':
-				sendMessageToAllClients(std::string("Q-") + std::to_string(c->id));
-				break;
-			case 'S':
-				sendMessageToAllClients(std::string("S-") + std::to_string(c->id));
-				break;
-			case 'D':
-				sendMessageToAllClients(std::string("D-") + std::to_string(c->id));
+			case 'T':
+				//TODO fire
+				sendMessageToAllClients(std::string("T-") + std::to_string(c->id));
 				break;
 			case 'H':
 				recivePingFromClient(c);
 				break;
 			case 'X':
 				removeClientDependencies(c);
-				removrClientFromList(c);
+				removeClientFromList(c);
 				end = true;
 				break;
 			}

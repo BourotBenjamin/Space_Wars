@@ -51,17 +51,17 @@ private:
 	int listenForMessage(std::shared_ptr<NetworkClient>  client);
 	void newClientConnection(std::shared_ptr<NetworkClient> client);
 	std::shared_ptr<NetworkClient> initClient(SOCKET csock);
-	void removrClientFromList(std::shared_ptr<NetworkClient> c);
+	void removeClientFromList(std::shared_ptr<NetworkClient> c);
 	void removeClientDependencies(std::shared_ptr<NetworkClient> c);
 
 	void sendMessageToOneClient(std::shared_ptr<NetworkClient> listener, std::string message);
 	void sendMessageToAllClients(std::string message);
 
-	std::string createCoordMessage(std::shared_ptr<NetworkClient> client);
-	void sendOneClientCoordToOneClient(std::shared_ptr<NetworkClient> client, std::shared_ptr<NetworkClient> listener);
-	void sendAllClientsCoordToOneClient(std::shared_ptr<NetworkClient> listener);
-	void sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> c);
-	void sendAllClientsCoordToAllClients();
+	std::string createCoordMessage(std::shared_ptr<NetworkClient> client, bool n);
+	void sendOneClientCoordToOneClient(std::shared_ptr<NetworkClient> client, std::shared_ptr<NetworkClient> listener, bool n);
+	void sendAllClientsCoordToOneClient(std::shared_ptr<NetworkClient> listener, bool n);
+	void sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> c, bool n);
+	void sendAllClientsCoordToAllClients(bool n);
 	int Server::pingAllClients();
 	void Server::recivePingFromClient(std::shared_ptr<NetworkClient> c);
 };

@@ -19,6 +19,7 @@ struct Player {
 	}
 };
 
+
 class Client
 {
 public:
@@ -26,6 +27,7 @@ public:
 	~Client();
 	void sendMessage(std::string message);
 	std::list<Player> players;
+	int selfId;
 private:
 	char* chars;
 	SOCKET sock;
@@ -36,5 +38,7 @@ private:
 	int listenForMessage();
 	void removePlayer(std::string& str);
 	void createPlayer(std::string& str);
+	void updatePlayer(std::string& str);
+	Player* getPlayerAt(int index);
 };
 
