@@ -7,12 +7,15 @@
 #include <vector>
 #include <sstream>
 #include <memory>
+#include <glm\vec3.hpp>
 
 
 
 struct NetworkClient
 {
 	int id;
+	glm::vec3 pos;
+	glm::vec3 orientation;
 	int x;
 	int y;
 	int z;

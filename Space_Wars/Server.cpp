@@ -42,7 +42,7 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 void Server::newClientConnection(std::shared_ptr<NetworkClient> client)
 {
 	sendOneClientCoordToAllClients(client, true);
-	sendMessageToOneClient(client, std::string("Y-") + std::to_string(client->id))
+	sendMessageToOneClient(client, std::string("Y-") + std::to_string(client->id));
 }
 
 void Server::sendAllClientsCoordToAllClients(bool n)
@@ -262,7 +262,3 @@ Server::~Server()
 }
 
 
-int main()
-{
-	Server s;
-}
