@@ -1,8 +1,5 @@
 #include "Client.h"
-#include <string>
-#include <sstream>
-#include <vector>
-#include <list>
+
 
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
 	std::stringstream ss(s);
@@ -25,22 +22,20 @@ std::vector<std::string> split(const std::string &s, char delim) {
 void Client::createPlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
-	Player p;
-	p.id = std::stoi(elems.at(1));
-	p.x = std::stoi(elems.at(2));
-	p.y = std::stoi(elems.at(3));
-	p.z = std::stoi(elems.at(4));
-	p.angleX = std::stoi(elems.at(5));
-	p.angleY = std::stoi(elems.at(6));
+	PlayerGL p;
+	p.setId(std::stoi(elems.at(1)));
+	p.setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
+	p.setAngleX(std::stof(elems.at(5)));
+	p.setAngleY(std::stof(elems.at(6)));
 	players.push_back(p);
 }
 
-Player* Client::getPlayerAt(int index)
+PlayerGL* Client::getPlayerAt(int index)
 {
-	for each (Player& p in players)
+	for (auto it = players.begin(); it != players.end(); ++it)
 	{
-		if (p.id == index)
-			return &p;
+		if ((*it).getId() == index)
+			return &(*it);
 	}
 	return nullptr;
 }
@@ -48,19 +43,21 @@ Player* Client::getPlayerAt(int index)
 void Client::updatePlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
-	Player* p = getPlayerAt(std::stoi(elems.at(1)));
-	p->x = std::stoi(elems.at(2));
-	p->y = std::stoi(elems.at(3));
-	p->z = std::stoi(elems.at(4));
-	p->angleX = std::stoi(elems.at(5));
-	p->angleY = std::stoi(elems.at(6));
+	PlayerGL* p = getPlayerAt(std::stoi(elems.at(1)));
+
+	p->setId(std::stoi(elems.at(1)));
+	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
+	p->setAngleX(std::stof(elems.at(5)));
+	p->setAngleY(std::stof(elems.at(6)));
 }
 
 void Client::removePlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
-	Player p;
-	p.id = std::stoi(elems.at(1));
+	PlayerGL p;
+	if (elems.empty())
+		return;
+	p.setId( std::stoi(elems.at(1)));
 	players.remove(p);
 }
 
