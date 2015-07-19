@@ -28,11 +28,8 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 	c->sock = csock;
 	c->name = std::string("Visiteur_") + std::to_string(nb_clients_all_time);
 	c->id = nb_clients_all_time;
-	c->x = rand() % 500;
-	c->y = rand() % 500;
-	c->z = rand() % 500;
-	c->angleX = rand() % 360;
-	c->angleY = rand() % 360;
+	c->pos = glm::vec3(rand() % 500, rand() % 500, rand() % 500);
+	c->orientation = glm::vec3(rand() % 500, rand() % 500, rand() % 500);
 	c->ping = true;
 	c->pingAttemps = 0;
 	clients.push_back(c);
@@ -79,11 +76,12 @@ std::string Server::createCoordMessage(std::shared_ptr<NetworkClient> client, bo
 	else
 		s1 = std::string("P-");
 	return s1 + std::to_string(client->id) +
-		std::string("-") + std::to_string(client->x) +
-		std::string("-") + std::to_string(client->y) +
-		std::string("-") + std::to_string(client->z) +
-		std::string("-") + std::to_string(client->angleX) +
-		std::string("-") + std::to_string(client->angleY);
+		std::string("-") + std::to_string(client->pos.x) +
+		std::string("-") + std::to_string(client->pos.y) +
+		std::string("-") + std::to_string(client->pos.z) +
+		std::string("-") + std::to_string(client->orientation.x) +
+		std::string("-") + std::to_string(client->orientation.y) +
+		std::string("-") + std::to_string(client->orientation.z);
 }
 
 void Server::sendMessageToAllClients(std::string message)
@@ -165,6 +163,15 @@ void Server::removeClientFromList(std::shared_ptr<NetworkClient> c)
 	clients.remove_if([c](std::shared_ptr<NetworkClient> c2){ return c2->id == c->id; });
 }
 
+void Server::updateRotation(std::shared_ptr<NetworkClient> c, std::string str)
+{
+	std::vector<std::string> elems = split(str, '-');
+	c->orientation.x = std::stof(elems.at(1));
+	c->orientation.y = std::stof(elems.at(2));
+	c->orientation.z = std::stof(elems.at(3));
+	glm::normalize(c->orientation);
+}
+
 int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 {
 	newClientConnection(c);
@@ -178,7 +185,7 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 			switch (chars[0])
 			{
 			case 'R':
-				//TODO update rotation 
+				updateRotation(c, std::string(chars));
 				sendOneClientCoordToAllClients(c, false);
 				break;
 			case 'T':
@@ -250,10 +257,39 @@ void Server::init()
 		this,          // couple with server and client 
 		0,                      // use default creation flags 
 		&(pingThreadId) // return thread ID
-	);
+		);
+	gameLoopThreadHandle = CreateThread(
+		NULL,                   // default security attributes
+		0,                      // use default stack size  
+		createGameLoop,       // thread function name
+		this,          // couple with server and client 
+		0,                      // use default creation flags 
+		&(gameLoopThreadId) // return thread ID
+		);
 	listenForClientsConnections(sin, sock);
 }
 
+DWORD WINAPI Server::createGameLoop(LPVOID server)
+{
+	Server* s = (Server*)server;
+	s->gameLoop();
+	return 0;
+}
+
+void Server::gameLoop()
+{
+	clock_t t;
+	int begin = 0;
+	while (true)
+	{
+		t = clock();
+		for each (auto c in clients)
+		{
+			c->pos += c->orientation;
+		}
+		Sleep(166 - (clock() - t));
+	}
+}
 
 Server::~Server()
 {
