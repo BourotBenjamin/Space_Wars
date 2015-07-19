@@ -10,6 +10,7 @@
 #include <glm\vec3.hpp>
 #include <glm\geometric.hpp>
 #include <time.h>
+#include <math.h>
 #define CLOCKS_PER_SEC = 10000;
 
 
@@ -31,6 +32,13 @@ struct NetworkClient
 	}
 };
 
+struct Projectile
+{
+	glm::vec3 position;
+	glm::vec3 orientation;
+	std::shared_ptr<NetworkClient> owner;
+};
+
 class Server
 {
 public:
@@ -43,6 +51,7 @@ private:
 	HANDLE gameLoopThreadHandle;
 	SOCKET sock;
 	std::list<std::shared_ptr<NetworkClient>> clients;
+	std::list<std::shared_ptr<Projectile>> projectiles;
 	int nb_clients_all_time = 0, nb_clients = 0;
 	char* chars = (char*)malloc(sizeof(char)* 15);
 
@@ -58,6 +67,7 @@ private:
 	std::shared_ptr<NetworkClient> initClient(SOCKET csock);
 	void removeClientFromList(std::shared_ptr<NetworkClient> c);
 	void removeClientDependencies(std::shared_ptr<NetworkClient> c);
+	void createProjectile(std::shared_ptr<NetworkClient> c);
 	void updateRotation(std::shared_ptr<NetworkClient> c, std::string str);
 
 	void sendMessageToOneClient(std::shared_ptr<NetworkClient> listener, std::string message);

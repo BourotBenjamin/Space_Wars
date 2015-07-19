@@ -189,8 +189,7 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 				sendOneClientCoordToAllClients(c, false);
 				break;
 			case 'T':
-				//TODO fire
-				sendMessageToAllClients(std::string("T-") + std::to_string(c->id));
+				createProjectile(c);
 				break;
 			case 'H':
 				recivePingFromClient(c);
@@ -204,6 +203,23 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 		}
 	}
 	return 0;
+}
+
+
+void Server::createProjectile(std::shared_ptr<NetworkClient> c)
+{
+	Projectile p = Projectile();
+	p.position = c->pos;
+	p.orientation = c->orientation * 2.0f;
+	sendMessageToAllClients(std::string("T-") + std::to_string(p.position.x) +
+		std::string("-") + std::to_string(p.position.y) +
+		std::string("-") + std::to_string(p.position.z) +
+		std::string("-") + std::to_string(p.orientation.x) +
+		std::string("-") + std::to_string(p.orientation.y) +
+		std::string("-") + std::to_string(p.orientation.z)
+	);
+	p.owner = c;
+	projectiles.push_back(std::shared_ptr<Projectile>(&p));
 }
 
 void Server::listenForClientsConnections(SOCKADDR_IN sin, SOCKET sock)
@@ -286,6 +302,18 @@ void Server::gameLoop()
 		for each (auto c in clients)
 		{
 			c->pos += c->orientation;
+		}
+		for each (auto p in projectiles)
+		{
+			p->position += p->orientation;
+			for each (auto c in clients)
+			{
+				if (std::abs(glm::distance(c->pos, p->position)) < 10.0f)
+				{
+					sendMessageToAllClients(std::string("S-") + std::to_string(p->owner->id) +
+						std::string("-") + std::to_string(c->id));
+				}
+			}
 		}
 		Sleep(166 - (clock() - t));
 	}
