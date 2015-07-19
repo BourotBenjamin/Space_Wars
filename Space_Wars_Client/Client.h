@@ -21,10 +21,24 @@ public:
 	~Client();
 	void sendMessage(std::string message);
 	std::list<PlayerGL> players;
-	int selfId;
+
+	PlayerGL* getPlayerAt(int index);
+	int getSelfID(){ return selfId; }
+	void addAngles(float x, float y)
+	{ 
+		PlayerGL * p = getPlayerAt(selfId);
+		p->setAngleX(x);
+		p->setAngleY(y);
+
+	};
+	void fire();
+	void move();
+
 private:
 	char* chars;
 	SOCKET sock;
+
+	int selfId;
 
 	static DWORD WINAPI Client::createThreadListenOnClient(LPVOID c);
 
@@ -33,6 +47,5 @@ private:
 	void removePlayer(std::string& str);
 	void createPlayer(std::string& str);
 	void updatePlayer(std::string& str);
-	PlayerGL* getPlayerAt(int index);
 };
 

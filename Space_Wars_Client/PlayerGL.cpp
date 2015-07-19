@@ -6,6 +6,9 @@ PlayerGL::PlayerGL()
 	pos.x = 0.f;
 	pos.y = 0.f;
 	pos.z = 5.f;
+	orientation = -pos;
+	glm::normalize(orientation);
+	rotation = glm::mat4(1.0f);
 	m_shader = Shader("basic.vs", "basic.fs");
 	m_shader.charger();
 	load();

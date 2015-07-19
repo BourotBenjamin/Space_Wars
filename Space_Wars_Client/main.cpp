@@ -23,9 +23,12 @@ Shader basicShader;
 #include <cmath>
 int previousTime = 0;
 
+void mouseButtonPressed(int button, int state, int x, int y);
 
 PlayerGL* p;
+Client* c;
 
+float FOV = 70.0f;
 
 /*
 struct Camera
@@ -64,7 +67,7 @@ void Render()
 	float h = (float)glutGet(GLUT_WINDOW_HEIGHT);
 	float ratio = w / h;
 
-	glm::mat4 proj = glm::perspective(45.f, w / h, 0.1f, 1000.f);
+	glm::mat4 proj = glm::perspective(FOV, ratio, 0.1f, 1000.f);
 	glm::mat4 modelView;
 	modelView = glm::mat4(1.0f);
 	modelView = glm::translate(glm::vec3(0, 0, -7.0f));
@@ -82,7 +85,7 @@ void Render()
 
 int main(int argc, char * argv[])
 {
-	//Client c = Client();
+	c = new Client();
 	//c.sendMessage("Z");
 	//c.sendMessage("S");
 	//c.sendMessage("D");
@@ -103,6 +106,8 @@ int main(int argc, char * argv[])
 	Initialize();
 
 	glutDisplayFunc(Render);
+	glutMouseFunc(mouseButtonPressed);
+	glutMotionFunc(mouseMove);
 
 	glutMainLoop();
 
@@ -115,4 +120,19 @@ int main(int argc, char * argv[])
 	//fait avancer les vaisseaux dans le vecteur orientation
 
 	//envoi les inputs
+}
+
+void mouseButtonPressed(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON || state == GLUT_DOWN)
+		c->fire();
+	
+}
+
+void mouseMove(int x, int y)
+{
+	int nbx = x % 20;
+	int nby = y % 20;
+
+
 }

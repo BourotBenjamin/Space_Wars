@@ -55,8 +55,6 @@ void Client::removePlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
 	PlayerGL p;
-	if (elems.empty())
-		return;
 	p.setId( std::stoi(elems.at(1)));
 	players.remove(p);
 }
@@ -149,5 +147,27 @@ void Client::init()
 		0,                      // use default creation flags 
 		&dwThreadIdArray
 	);
+}
+
+void Client::fire()
+{
+	PlayerGL* p = getPlayerAt(selfId);
+	sendMessage(std::string("T-") + std::to_string(p->getPos().x) +
+		std::string("-") + std::to_string(p->getPos().y) +
+		std::string("-") + std::to_string(p->getPos().z) +
+		std::string("-") + std::to_string(p->getOrientation().x) +
+		std::string("-") + std::to_string(p->getOrientation().y) +
+		std::string("-") + std::to_string(p->getOrientation().z) +
+		std::string("-") + std::to_string(selfId));
+}
+
+void Client::move()
+{
+	PlayerGL* p = getPlayerAt(selfId);
+	sendMessage(std::string("R-")+
+		std::string("-") + std::to_string(p->getOrientation().x) +
+		std::string("-") + std::to_string(p->getOrientation().y) +
+		std::string("-") + std::to_string(p->getOrientation().z) +
+		std::string("-") + std::to_string(selfId));
 }
 

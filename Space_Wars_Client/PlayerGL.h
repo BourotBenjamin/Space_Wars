@@ -36,6 +36,8 @@ public:
 		return p.id == this->id;
 	}
 
+	void doRoation(){ glm::rotate(angleX, glm::vec3(0, 1, 0)); glm::rotate(angleY, glm::vec3(1, 0, 0)); }
+
 	void draw(glm::mat4& projection, glm::mat4& modelView);
 	void draw(float * projection, float * modelView);
 
@@ -73,6 +75,8 @@ protected:
 	float color[15];
 
 	GLushort indices[18];
+
+	glm::mat4 rotation;
 
 	int id;
 	glm::vec3 pos;
