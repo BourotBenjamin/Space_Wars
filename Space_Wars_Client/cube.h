@@ -1,4 +1,3 @@
-
 #pragma once
 
 static const float g_cubeVertices[] = {
@@ -26,3 +25,21 @@ static const unsigned short g_cubeIndices[] = {
 	4, 5, 1, // bas
 	1, 0, 4
 };
+/*
+static const float g_pyramydeVertices[] = {
+	-1.f, -1.f, 1.0f,		// 0
+	1.f, 0.f, 0.0f,  		// 1
+	-1.f, 1.f, 1.0f,		// 3	
+	-1.f, -1.f, -1.0f,		// 4
+	-1.f, 1.f, -1.0f		// 7
+};
+
+static const unsigned short g_pyramideIndices[] = {
+
+	3, 0, 2, // gauche
+	2, 4, 3,
+	0, 1, 2,
+	2, 1, 4,
+	4, 1, 2,
+	3, 1, 0
+};*/
