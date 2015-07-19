@@ -43,8 +43,10 @@ class Server
 {
 public:
 	Server();
+	Server(float pRange);
 	~Server();
 private:
+	float projectileRange = 10.0f;
 	DWORD pingThreadId;
 	HANDLE pingThreadHandle;
 	DWORD gameLoopThreadId;

@@ -17,6 +17,12 @@ std::vector<std::string> split(const std::string &s, char delim) {
 	return elems;
 }
 
+Server::Server(float pRange)
+{
+	projectileRange = pRange;
+	init();
+}
+
 Server::Server()
 {
 	init();
@@ -308,7 +314,7 @@ void Server::gameLoop()
 			p->position += p->orientation;
 			for each (auto c in clients)
 			{
-				if (p->owner->id != c->id && std::abs(glm::distance(c->pos, p->position)) < 10.0f)
+				if (p->owner->id != c->id && std::abs(glm::distance(c->pos, p->position)) < projectileRange)
 				{
 					sendMessageToAllClients(std::string("S-") + std::to_string(p->owner->id) +
 						std::string("-") + std::to_string(c->id));
