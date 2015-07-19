@@ -5,7 +5,7 @@ PlayerGL::PlayerGL()
 {
 	pos.x = 0.f;
 	pos.y = 0.f;
-	pos.z = 0.f;
+	pos.z = 5.f;
 	m_shader = Shader("basic.vs", "basic.fs");
 	m_shader.charger();
 	load();
@@ -13,6 +13,15 @@ PlayerGL::PlayerGL()
 
 void PlayerGL::load()
 {
+
+	if (glIsVertexArray(m_vaoID) == GL_TRUE)
+		glDeleteVertexArrays(1, &m_vaoID);
+	// Destruction d'un éventuel ancien VBO
+	if (glIsBuffer(m_vboID) == GL_TRUE)
+		glDeleteBuffers(1, &m_vboID);
+	if (glIsBuffer(m_eboID) == GL_TRUE)
+		glDeleteBuffers(1, &m_eboID);
+
 	glGenVertexArrays(1, &m_vaoID);
 	glGenBuffers(1, &m_vboID);
 	glGenBuffers(1, &m_eboID);
