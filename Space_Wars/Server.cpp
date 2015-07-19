@@ -308,7 +308,7 @@ void Server::gameLoop()
 			p->position += p->orientation;
 			for each (auto c in clients)
 			{
-				if (std::abs(glm::distance(c->pos, p->position)) < 10.0f)
+				if (p->owner->id != c->id && std::abs(glm::distance(c->pos, p->position)) < 10.0f)
 				{
 					sendMessageToAllClients(std::string("S-") + std::to_string(p->owner->id) +
 						std::string("-") + std::to_string(c->id));
