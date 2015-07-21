@@ -158,7 +158,7 @@ int Server::pingAllClients()
 		clientsToRemove.empty();
 		Sleep(1000);
 		i++;
-		if (i == 3)
+		if (i == 5)
 		{
 			i = 0;
 			sendAllClientsCoordToAllClients(false);
