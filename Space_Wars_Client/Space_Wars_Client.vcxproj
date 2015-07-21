@@ -130,7 +130,11 @@
     <ClInclude Include="MyGLWidget.h" />
     <ClInclude Include="PlayerGL.h" />
     <ClInclude Include="Point2.h" />
+    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="projectileInfo.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Vaisseau.h" />
+    <ClInclude Include="vaisseauInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\EsgiShader.cpp" />
@@ -143,7 +147,9 @@
     <ClCompile Include="MyGLWidget.cpp" />
     <ClCompile Include="PlayerGL.cpp" />
     <ClCompile Include="Point2.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Vaisseau.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

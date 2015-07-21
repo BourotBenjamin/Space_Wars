@@ -1,11 +1,14 @@
 #ifndef MY_GL_WIDGET
 #define MY_GL_WIDGET
 
+#include "Client.h"
 #include "Cube.h"
 #include <QtOpenGL\qglWidget>
 #include "Mat4x4.h"
 #include "Camera.h"
 #include "Cube.h"
+#include "Vaisseau.h"
+#include "Projectile.h"
 
 class Army;
 
@@ -14,8 +17,12 @@ class MyGLWidget : public QGLWidget
 	
 protected:
 
-	std::vector<std::shared_ptr<Cube>> listcube;
-	Cube * lol;
+	Client * c;
+	
+	Vaisseau * ship;
+	ProjectileGL * projectile;
+
+	QPoint lastPos;
 
 	Mat4x4 projection;
 	Mat4x4 modelView;

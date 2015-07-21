@@ -16,8 +16,14 @@ void MyGLWidget::initializeGL()
 	setMouseTracking(true);
 	projection.Perspective(45.f, 800, 800, 0.1f, 1000.f);
 	cam = Camera(Point2(0, 0, -7.0f), Point2(0, 0, 0), Point2(0, 1, 0));
-	lol = new Cube("courbeVertex.vs", "courbeFragment.fs");
-	lol->load();
+
+	c = new Client();
+
+	ship = new Vaisseau("courbeVertex.vs", "courbeFragment.fs");
+	ship->load();
+
+	projectile = new ProjectileGL("courbeVertex.vs", "courbeFragment.fs");
+	projectile->load();
 	anglex = 0.f;
 	angley = 0.f;
 	rightClick = false;
@@ -27,8 +33,6 @@ void MyGLWidget::initializeGL()
 	m_relativeMouse = Point2();
 	cam.lookAt(modelView);
 
-	listcube.push_back(std::shared_ptr<Cube>(new Cube("courbeVertex.vs", "courbeFragment.fs")));
-	listcube.back()->load();
 }
 
 void MyGLWidget::paintGL()
@@ -39,7 +43,40 @@ void MyGLWidget::paintGL()
 	cam.lookAt(modelView);
 	
 	Mat4x4 world;
-	world.identity();
+	for (int i = 0; i < c->getPlayerSize(); i++)
+	{
+		PlayerGL * p = c->getPlayerAt(i);
+		glm::vec3 ppos = p->getPos();
+		world.identity();
+		world.translate(ppos.x, ppos.y, ppos.z);
+		world.rotateX(p->getAngleX());
+		world.rotateX(p->getAngleY());
+		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
+	}
+
+	for (auto it = c->getProj().begin(); it != c->getProj().end(); ++it)
+	{
+		glm::vec3 ppos = (*it)->position;
+		world.identity();
+		world.translate(ppos.x, ppos.y, ppos.z);
+		/*
+		world.rotateX(p->getAngleX());
+		world.rotateX(p->getAngleY());
+		*/
+		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
+	}
+
+	/*for (int i = 0; i < c->getProjectileSize(); i++)
+	{
+		PlayerGL * p = c->getPlayerAt(i);
+		glm::vec3 ppos = p->getPos();
+		world.identity();
+		world.translate(ppos.x, ppos.y, ppos.z);
+		world.rotateX(p->getAngleX());
+		world.rotateX(p->getAngleY());
+		lol->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
+	}*/
+	/*world.identity();
 	world.translate(1, 0, 4);
 	lol->draw(projection, modelView, world, Point2(1.f,0.f,0.f), cam.getPos(), cam.getOrientation());
 
@@ -49,38 +86,13 @@ void MyGLWidget::paintGL()
 
 	world.identity();
 	world.translate(0, 2, 0);
-	lol->draw(projection, modelView, world, Point2(0.f, 0.f, 1.f), cam.getPos(), cam.getOrientation());
+	lol->draw(projection, modelView, world, Point2(0.f, 0.f, 1.f), cam.getPos(), cam.getOrientation());*/
 	
-
-	/*Mat4x4 world;
-	for (auto it = A->getUnitsList().begin(); it != A->getUnitsList().end(); ++it)
-	{
-		Point p = (*it)->getPosition();
-		
-		world.identity();
-		world.translate(p.getX(), 0, p.getY());
-		lol->draw(projection, modelView, world, cam.getPos(), cam.getOrientation());
-	}
-	for (auto it = B->getUnitsList().begin(); it != B->getUnitsList().end(); ++it)
-	{
-		Point p = (*it)->getPosition();
-
-		world.identity();
-		world.translate(p.getX(), 0, p.getY());
-		lol->draw(projection, modelView, world, cam.getPos(), cam.getOrientation());
-	}*/
-	
-	//lol->load();
-
-	
-	/*for (auto it = listcube.begin(); it != listcube.end(); ++it)
-		(*it)->draw(projection, modelView, world);
-		*/
 }
 
 void MyGLWidget::mousePressEvent(QMouseEvent * e)
 {
-	
+	c->fire();
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent * e)
@@ -91,6 +103,12 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent * e)
 	cam.orienter(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
 	m_oldMousePos = Point2(e->x(), e->y(), m_z);
 
+	c->rotate(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
+
+	/*QPoint glob = mapToGlobal(QPoint(width() / 2, height() / 2));
+	QCursor::setPos(glob);
+	lastPos = QPoint(width() / 2, height() / 2);
+	QGLWidget::mouseMoveEvent(e);*/
 	repaint();
 }
 
@@ -140,14 +158,6 @@ bool MyGLWidget::event(QEvent *e)
 			modelView.identity();
 			cam.lookAt(modelView);
 			repaint();
-			return true;
-		}
-		if (ke->key() == Qt::Key_Plus) {
-			m_z += 0.2;
-			return true;
-		}
-		if (ke->key() == Qt::Key_Minus) {
-			m_z -= 0.2;
 			return true;
 		}
 	}

@@ -27,6 +27,10 @@ public:
 
 	float * getMatrix(){ return m; }
 
+	void rotateX(float angle);
+	void rotateY(float angle);
+	void rotateZ(float angle);
+
 	void identity();
 	void translate(float x, float y, float z);
 	void rotate(float angle, float x, float y, float z);

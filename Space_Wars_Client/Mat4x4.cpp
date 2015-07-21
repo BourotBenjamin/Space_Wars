@@ -90,6 +90,45 @@ void Mat4x4::translate(float x, float y, float z)
 	(*this) *= matrix;
 }
 
+void Mat4x4::rotateX(float angle)
+{
+	Mat4x4 matrix = Mat4x4();
+	float angleRad = angle*M_PI / 180;
+	matrix.identity();
+	matrix.m[5] = std::cosf(angleRad);
+	matrix.m[6] = std::sinf(angleRad);
+	matrix.m[9] = -std::sinf(angleRad);
+	matrix.m[10] = std::cosf(angleRad);
+
+	(*this) *= matrix;
+}
+
+void Mat4x4::rotateY(float angle)
+{
+	Mat4x4 matrix = Mat4x4();
+	float angleRad = angle*M_PI / 180;
+	matrix.identity();
+	matrix.m[0] = std::cosf(angleRad);
+	matrix.m[3] = -std::sinf(angleRad);
+	matrix.m[8] = std::sinf(angleRad);
+	matrix.m[10] = std::cosf(angleRad);
+
+	(*this) *= matrix;
+}
+
+void Mat4x4::rotateZ(float angle)
+{
+	Mat4x4 matrix = Mat4x4();
+	float angleRad = angle*M_PI / 180;
+	matrix.identity();
+	matrix.m[0] = std::cosf(angleRad);
+	matrix.m[1] = std::sinf(angleRad);
+	matrix.m[4] = -std::sinf(angleRad);
+	matrix.m[5] = std::cosf(angleRad);
+
+	(*this) *= matrix;
+}
+
 void Mat4x4::rotate(float angle, float x, float y, float z)
 {
 	Mat4x4 matrix = Mat4x4();

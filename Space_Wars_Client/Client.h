@@ -32,8 +32,10 @@ public:
 	Client();
 	~Client();
 	void sendMessage(std::string message);
-	std::list<PlayerGL> players;
-	std::list<std::shared_ptr<Projectile>> projectiles;
+
+	int getPlayerSize(){ return players.size(); }
+	int getProjectileSize(){ return projectiles.size(); }
+	std::list<std::shared_ptr<Projectile>>& getProj() { return projectiles; }
 
 	PlayerGL* getPlayerAt(int index);
 	int getSelfID(){ return selfId; }
@@ -42,6 +44,10 @@ public:
 	void gameLoopStep(float micro);
 
 private:
+
+
+	std::list<PlayerGL> players;
+	std::list<std::shared_ptr<Projectile>> projectiles;
 	char* chars;
 	SOCKET sock;
 
