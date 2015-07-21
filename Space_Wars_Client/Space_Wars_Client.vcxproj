@@ -71,11 +71,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\Libs\glew\include;$(ProjectDir)\..\Libs\qt\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\Libs\glm;$(ProjectDir)\..\Libs\glew\include;$(ProjectDir)\..\Libs\qt\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>ws2_32.lib;opengl32.lib;glew32s.lib;Qt5Widgets.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\Libs\glew\lib\Release\x64;$(ProjectDir)\..\Libs\qt\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
