@@ -39,14 +39,29 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 	c->orientation = glm::vec3(rand() % 500, rand() % 500, rand() % 500);
 	c->ping = true;
 	c->pingAttemps = 0;
-	clients.push_back(c);
 	return c;
 }
+
+
 
 void Server::newClientConnection(std::shared_ptr<NetworkClient> client)
 {
 	sendOneClientCoordToAllClients(client, true);
+	clients.push_back(client);
+	sendAllClientsCoordToOneClient(client, true);
 	sendMessageToOneClient(client, std::string("Y-") + std::to_string(client->id));
+	for each (std::shared_ptr<Projectile> p in projectiles)
+	{
+		sendMessageToOneClient(client, std::string("T-") + std::to_string(p->position.x) +
+			std::string("-") + std::to_string(p->position.y) +
+			std::string("-") + std::to_string(p->position.z) +
+			std::string("-") + std::to_string(p->orientation.x) +
+			std::string("-") + std::to_string(p->orientation.y) +
+			std::string("-") + std::to_string(p->orientation.z) +
+			std::string("-") + std::to_string(p->id) +
+			std::string("-") + std::to_string(p->owner->id)
+			);
+	}
 }
 
 void Server::sendAllClientsCoordToAllClients(bool n)
@@ -219,8 +234,7 @@ void Server::createProjectile(std::shared_ptr<NetworkClient> c)
 	p.id = nb_projectiles_all_time++;
 	p.position = c->pos;
 	p.orientation = c->orientation * 2.0f;
-	sendMessageToAllClients(std::string("T-") + std::to_string(p.id) +
-		std::string("-") + std::to_string(p.position.x) +
+	sendMessageToAllClients(std::string("T-") + std::to_string(p.position.x) +
 		std::string("-") + std::to_string(p.position.y) +
 		std::string("-") + std::to_string(p.position.z) +
 		std::string("-") + std::to_string(p.orientation.x) +
