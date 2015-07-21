@@ -107,7 +107,7 @@ int main(int argc, char * argv[])
 
 	glutDisplayFunc(Render);
 	glutMouseFunc(mouseButtonPressed);
-	glutMotionFunc(mouseMove);
+	//glutMotionFunc(mouseMove);
 
 	glutMainLoop();
 
