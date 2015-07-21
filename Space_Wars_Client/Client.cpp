@@ -147,6 +147,8 @@ void Client::createProjectile(std::string& str)
 	p.orientation.z = std::stof(elems.at(6));
 	p.id = std::stoi(elems.at(7));
 	p.owner_id = std::stoi(elems.at(8));
+	p.angleX = glm::orientedAngle(glm::vec3(1.0f, 0.0f, 0.0f), p.orientation, glm::vec3(0.0f, 0.0f, 1.0f));
+	p.angleY = glm::orientedAngle(glm::vec3(0.0f, 1.0f, 0.0f), p.orientation, glm::vec3(0.0f, 0.0f, 1.0f));
 	projectiles.push_back(std::shared_ptr<Projectile>(&p));
 }
 

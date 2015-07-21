@@ -12,6 +12,7 @@
 #include <memory>
 #include <algorithm>
 #include "PlayerGL.h"
+#include <glm/gtx/vector_angle.hpp>
 
 
 struct Projectile
@@ -20,6 +21,8 @@ struct Projectile
 	glm::vec3 position;
 	glm::vec3 orientation;
 	int owner_id;
+	float angleX;
+	float angleY;
 };
 
 
