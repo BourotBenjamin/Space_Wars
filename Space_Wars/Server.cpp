@@ -17,9 +17,10 @@ std::vector<std::string> split(const std::string &s, char delim) {
 	return elems;
 }
 
-Server::Server(float pRange)
+Server::Server(float pRange, float cRange)
 {
 	projectileRange = pRange;
+	crashRange = cRange;
 	init();
 }
 
@@ -215,9 +216,11 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 void Server::createProjectile(std::shared_ptr<NetworkClient> c)
 {
 	Projectile p = Projectile();
+	p.id = nb_projectiles_all_time++;
 	p.position = c->pos;
 	p.orientation = c->orientation * 2.0f;
-	sendMessageToAllClients(std::string("T-") + std::to_string(p.position.x) +
+	sendMessageToAllClients(std::string("T-") + std::to_string(p.id) +
+		std::string("-") + std::to_string(p.position.x) +
 		std::string("-") + std::to_string(p.position.y) +
 		std::string("-") + std::to_string(p.position.z) +
 		std::string("-") + std::to_string(p.orientation.x) +
@@ -309,6 +312,16 @@ void Server::gameLoop()
 		for each (auto c in clients)
 		{
 			c->pos += c->orientation;
+			for each (auto c2 in clients)
+			{
+				if (c2->id != c->id && std::abs(glm::distance(c->pos, c2->pos)) < crashRange)
+				{
+					sendMessageToAllClients(std::string("C-") + std::to_string(c->id) +
+						std::string("-") + std::to_string(c2->id));
+					c->pos -= c->orientation;
+					c2->pos -= c->orientation;
+				}
+			}
 		}
 		for each (auto p in projectiles)
 		{
@@ -317,7 +330,8 @@ void Server::gameLoop()
 			{
 				if (p->owner->id != c->id && std::abs(glm::distance(c->pos, p->position)) < projectileRange)
 				{
-					sendMessageToAllClients(std::string("S-") + std::to_string(p->owner->id) +
+					sendMessageToAllClients(std::string("S-") + std::to_string(p->id) +
+						std::string("-") + std::to_string(p->owner->id) +
 						std::string("-") + std::to_string(c->id));
 				}
 			}

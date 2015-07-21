@@ -34,6 +34,7 @@ struct NetworkClient
 
 struct Projectile
 {
+	int id;
 	glm::vec3 position;
 	glm::vec3 orientation;
 	std::shared_ptr<NetworkClient> owner;
@@ -43,10 +44,11 @@ class Server
 {
 public:
 	Server();
-	Server(float pRange);
+	Server(float projectileRange, float collisionRange);
 	~Server();
 private:
 	float projectileRange = 10.0f;
+	float crashRange = 10.0f;
 	DWORD pingThreadId;
 	HANDLE pingThreadHandle;
 	DWORD gameLoopThreadId;
@@ -54,7 +56,7 @@ private:
 	SOCKET sock;
 	std::list<std::shared_ptr<NetworkClient>> clients;
 	std::list<std::shared_ptr<Projectile>> projectiles;
-	int nb_clients_all_time = 0, nb_clients = 0;
+	int nb_clients_all_time = 0, nb_clients = 0, nb_projectiles_all_time = 0;
 	char* chars = (char*)malloc(sizeof(char)* 15);
 
 	static DWORD WINAPI createThreadListenOnServer(LPVOID  client);

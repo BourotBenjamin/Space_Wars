@@ -151,14 +151,7 @@ void Client::init()
 
 void Client::fire()
 {
-	PlayerGL* p = getPlayerAt(selfId);
-	sendMessage(std::string("T-") + std::to_string(p->getPos().x) +
-		std::string("-") + std::to_string(p->getPos().y) +
-		std::string("-") + std::to_string(p->getPos().z) +
-		std::string("-") + std::to_string(p->getOrientation().x) +
-		std::string("-") + std::to_string(p->getOrientation().y) +
-		std::string("-") + std::to_string(p->getOrientation().z) +
-		std::string("-") + std::to_string(selfId));
+	sendMessage(std::string("T")); // Le client envoie juste le fait qu'il tire (le serveur envoi le projectile en face de la position réélle du joueur)
 }
 
 void Client::move()
