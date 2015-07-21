@@ -350,6 +350,8 @@ void Server::gameLoop()
 					sendMessageToAllClients(std::string("S-") + std::to_string(p->id) +
 						std::string("-") + std::to_string(p->owner->id) +
 						std::string("-") + std::to_string(c->id));
+					p->owner->score++;
+					c->score--;
 				}
 			}
 		}

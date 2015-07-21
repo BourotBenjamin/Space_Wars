@@ -28,6 +28,7 @@ struct NetworkClient
 	{
 		return c.id == this->id;
 	}
+	int score = 0;
 };
 
 struct Projectile
