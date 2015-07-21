@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm\vec3.hpp>
 #include <glm\mat4x4.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 static const float g_pyramydeVertices[] = {
 	-1.f, -1.f, 1.0f,		// 0
@@ -37,7 +38,19 @@ public:
 		return p.id == this->id;
 	}
 
-	void doRoation(){ glm::rotate(angleX, glm::vec3(0, 1, 0)); glm::rotate(angleY, glm::vec3(1, 0, 0)); }
+	bool doRoation(float x, float y)
+	{
+		if (x != angleX || y != angleY)
+		{
+			angleX = x;
+			angleY = y;
+			orientation = glm::vec3(0, 1, 0);
+			orientation = glm::rotateX(orientation, angleX);
+			orientation = glm::rotateX(orientation, angleY);
+			return true;
+		}
+		return false;
+	}
 
 	void draw(glm::mat4& projection, glm::mat4& modelView);
 	void draw(float * projection, float * modelView);
@@ -50,6 +63,11 @@ public:
 
 	int getId(){return id;}
 	void setId(int idd){ id = idd; }
+	void updatePos(float micro)
+	{
+		float SPEED = 1000.0f;
+		pos += orientation * SPEED * (micro / 1000.0f);
+	}
 
 	glm::vec3 getPos() { return pos; }
 	void setPos(float x, float y, float z){ pos.x = x; pos.y = y; pos.z = z; };
@@ -57,9 +75,7 @@ public:
 	glm::vec3 getOrientation() { return orientation; }
 	void setOrientation(glm::vec3 p){ orientation = p; }
 	float getAngleX(){ return angleX; }
-	void setAngleX(float a){ angleX = a; }
 	float getAngleY(){ return angleY; }
-	void setAngleY(float a){ angleY = a; }
 	std::string getName(){return name;}
 	void setName(std::string n){ name = n; }
 

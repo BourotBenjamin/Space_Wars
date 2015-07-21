@@ -9,9 +9,16 @@
 #include <sstream>
 #include <vector>
 #include <list>
+#include <memory>
 #include "PlayerGL.h"
 
 
+struct Projectile
+{
+	int id;
+	glm::vec3 position;
+	glm::vec3 orientation;
+};
 
 
 class Client
@@ -21,18 +28,13 @@ public:
 	~Client();
 	void sendMessage(std::string message);
 	std::list<PlayerGL> players;
+	std::list<std::shared_ptr<Projectile>> projectiles;
 
 	PlayerGL* getPlayerAt(int index);
 	int getSelfID(){ return selfId; }
-	void addAngles(float x, float y)
-	{ 
-		PlayerGL * p = getPlayerAt(selfId);
-		p->setAngleX(x);
-		p->setAngleY(y);
-
-	};
+	void rotate(float x, float y);
 	void fire();
-	void move();
+	void gameLoopStep(float micro);
 
 private:
 	char* chars;
@@ -47,5 +49,6 @@ private:
 	void removePlayer(std::string& str);
 	void createPlayer(std::string& str);
 	void updatePlayer(std::string& str);
+	void createProjectile(std::string& str);
 };
 

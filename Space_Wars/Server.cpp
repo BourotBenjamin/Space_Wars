@@ -265,6 +265,7 @@ void Server::init()
 {
 	nb_clients_all_time = 0;
 	clients = std::list<std::shared_ptr<NetworkClient>>();
+	projectiles = std::list<std::shared_ptr<Projectile>>();
 	nb_clients = 0;
 	std::string str = "";
 	WSADATA WSAData;
@@ -311,7 +312,7 @@ void Server::gameLoop()
 		t = clock();
 		for each (auto c in clients)
 		{
-			c->pos += c->orientation;
+			c->pos += c->orientation * SPEED * 166 / 10000;
 			for each (auto c2 in clients)
 			{
 				if (c2->id != c->id && std::abs(glm::distance(c->pos, c2->pos)) < crashRange)
@@ -336,7 +337,7 @@ void Server::gameLoop()
 				}
 			}
 		}
-		Sleep(166 - (clock() - t));
+		Sleep((166 - (clock() - t))/10);
 	}
 }
 
