@@ -12,9 +12,6 @@
 #include <time.h>
 #include <math.h>
 #define CLOCKS_PER_SEC = 10000;
-#define SPEED = 1000.0f;
-
-
 
 struct NetworkClient
 {

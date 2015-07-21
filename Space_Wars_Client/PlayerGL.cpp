@@ -104,3 +104,8 @@ void PlayerGL::draw(float * projection, float * modelView)
 	// Désactivation du shader
 	glUseProgram(0);
 }
+
+void PlayerGL::moveBackward()
+{
+	pos -= orientation;
+}

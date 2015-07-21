@@ -10,6 +10,7 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include <algorithm>
 #include "PlayerGL.h"
 
 
@@ -50,5 +51,7 @@ private:
 	void createPlayer(std::string& str);
 	void updatePlayer(std::string& str);
 	void createProjectile(std::string& str);
+	void removeProjectile(std::string& str);
+	void collision(std::string& str);
 };
 

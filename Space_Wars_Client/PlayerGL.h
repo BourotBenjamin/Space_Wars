@@ -69,6 +69,8 @@ public:
 		pos += orientation * SPEED * (micro / 1000.0f);
 	}
 
+	void moveBackward();
+
 	glm::vec3 getPos() { return pos; }
 	void setPos(float x, float y, float z){ pos.x = x; pos.y = y; pos.z = z; };
 	void setPos(glm::vec3 p){ pos = p; }

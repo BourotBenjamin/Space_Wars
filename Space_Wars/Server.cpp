@@ -305,6 +305,7 @@ DWORD WINAPI Server::createGameLoop(LPVOID server)
 
 void Server::gameLoop()
 {
+	float SPEED = 1000.0f;
 	clock_t t;
 	int begin = 0;
 	while (true)
@@ -312,7 +313,7 @@ void Server::gameLoop()
 		t = clock();
 		for each (auto c in clients)
 		{
-			c->pos += c->orientation * SPEED * 166 / 10000;
+			c->pos += c->orientation * SPEED * 166.0f / 10000.0f;
 			for each (auto c2 in clients)
 			{
 				if (c2->id != c->id && std::abs(glm::distance(c->pos, c2->pos)) < crashRange)

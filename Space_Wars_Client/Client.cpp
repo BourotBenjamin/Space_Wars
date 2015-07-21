@@ -89,6 +89,9 @@ int Client::listenForMessage()
 			char c0 = s.at(0);
 			switch (c0)
 			{
+			case 'C':
+				collision(s);
+				break;
 			case 'N':
 				createPlayer(s);
 				break;
@@ -100,6 +103,9 @@ int Client::listenForMessage()
 				break;
 			case 'H':
 				sendMessage(std::string("H"));
+				break;
+			case 'S':
+				removeProjectile(s);
 				break;
 			case 'T':
 				createProjectile(s);
@@ -115,6 +121,15 @@ int Client::listenForMessage()
 	return 0;
 }
 
+void Client::collision(std::string& str)
+{
+	std::vector<std::string> elems = split(str, '-');
+	PlayerGL* p = getPlayerAt(std::stoi(elems.at(1)));
+	p->moveBackward();
+	PlayerGL* p2 = getPlayerAt(std::stoi(elems.at(2)));
+	p2->moveBackward();
+}
+
 void Client::sendMessage(std::string message)
 {
 	send(sock, message.c_str(), message.length(), 0);
@@ -124,14 +139,22 @@ void Client::createProjectile(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
 	Projectile p;
-	p.position.x = std::stof(elems.at(0));
-	p.position.y = std::stof(elems.at(1));
-	p.position.z = std::stof(elems.at(2));
-	p.orientation.x = std::stof(elems.at(3));
-	p.orientation.y = std::stof(elems.at(4));
-	p.orientation.z = std::stof(elems.at(5));
-	p.id = std::stoi(elems.at(6));
+	p.position.x = std::stof(elems.at(1));
+	p.position.y = std::stof(elems.at(2));
+	p.position.z = std::stof(elems.at(3));
+	p.orientation.x = std::stof(elems.at(4));
+	p.orientation.y = std::stof(elems.at(5));
+	p.orientation.z = std::stof(elems.at(6));
+	p.id = std::stoi(elems.at(7));
 	projectiles.push_back(std::shared_ptr<Projectile>(&p));
+}
+
+void Client::removeProjectile(std::string& str)
+{
+	std::vector<std::string> elems = split(str, '-');
+	projectiles.remove_if([elems](std::shared_ptr<Projectile> p){
+		return std::stoi(elems.at(2)) == p->id;
+	});
 }
 
 void Client::init()
