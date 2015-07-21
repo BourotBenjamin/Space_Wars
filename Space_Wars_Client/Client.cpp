@@ -146,6 +146,7 @@ void Client::createProjectile(std::string& str)
 	p.orientation.y = std::stof(elems.at(5));
 	p.orientation.z = std::stof(elems.at(6));
 	p.id = std::stoi(elems.at(7));
+	p.owner_id = std::stoi(elems.at(8));
 	projectiles.push_back(std::shared_ptr<Projectile>(&p));
 }
 

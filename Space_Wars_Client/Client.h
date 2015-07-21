@@ -19,6 +19,7 @@ struct Projectile
 	int id;
 	glm::vec3 position;
 	glm::vec3 orientation;
+	int owner_id;
 };
 
 

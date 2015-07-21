@@ -226,6 +226,7 @@ void Server::createProjectile(std::shared_ptr<NetworkClient> c)
 		std::string("-") + std::to_string(p.orientation.x) +
 		std::string("-") + std::to_string(p.orientation.y) +
 		std::string("-") + std::to_string(p.orientation.z) +
+		std::string("-") + std::to_string(p.id) +
 		std::string("-") + std::to_string(c->id)
 	);
 	p.owner = c;
