@@ -39,6 +39,7 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 	c->orientation = glm::vec3(rand() % 500, rand() % 500, rand() % 500);
 	c->ping = true;
 	c->pingAttemps = 0;
+	clients.push_back(c);
 	return c;
 }
 
@@ -47,7 +48,6 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 void Server::newClientConnection(std::shared_ptr<NetworkClient> client)
 {
 	sendOneClientCoordToAllClients(client, true);
-	clients.push_back(client);
 	sendAllClientsCoordToOneClient(client, true);
 	sendMessageToOneClient(client, std::string("Y-") + std::to_string(client->id));
 	for each (std::shared_ptr<Projectile> p in projectiles)
@@ -201,9 +201,10 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 	bool end = false;
 	while (!end)
 	{
-		size = recv(c->sock, chars, 15, 0);
+		size = recv(c->sock, chars, 50, 0);
 		if (size > 0)
 		{
+			std::cout << std::string(chars, chars + size) << std::endl;
 			switch (chars[0])
 			{
 			case 'R':

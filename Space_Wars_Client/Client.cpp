@@ -86,6 +86,7 @@ int Client::listenForMessage()
 		if (size > 0)
 		{
 			std::string s(chars, chars + size);
+			std::cout << s << std::endl;
 			char c0 = s.at(0);
 			switch (c0)
 			{
