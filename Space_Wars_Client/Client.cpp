@@ -25,8 +25,7 @@ void Client::createPlayer(std::string& str)
 	PlayerGL p;
 	p.setId(std::stoi(elems.at(1)));
 	p.setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
-	p.setAngleX(std::stof(elems.at(5)));
-	p.setAngleY(std::stof(elems.at(6)));
+	p.doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
 	players.push_back(p);
 }
 
@@ -47,8 +46,7 @@ void Client::updatePlayer(std::string& str)
 
 	p->setId(std::stoi(elems.at(1)));
 	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
-	p->setAngleX(std::stof(elems.at(5)));
-	p->setAngleY(std::stof(elems.at(6)));
+	p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
 }
 
 void Client::removePlayer(std::string& str)
@@ -104,7 +102,7 @@ int Client::listenForMessage()
 				sendMessage(std::string("H"));
 				break;
 			case 'T':
-				//TODO Fire
+				createProjectile(s);
 				break;
 			case 'Y':
 				std::vector<std::string> elems = split(s, '-');
@@ -122,8 +120,23 @@ void Client::sendMessage(std::string message)
 	send(sock, message.c_str(), message.length(), 0);
 }
 
+void Client::createProjectile(std::string& str)
+{
+	std::vector<std::string> elems = split(str, '-');
+	Projectile p;
+	p.position.x = std::stof(elems.at(0));
+	p.position.y = std::stof(elems.at(1));
+	p.position.z = std::stof(elems.at(2));
+	p.orientation.x = std::stof(elems.at(3));
+	p.orientation.y = std::stof(elems.at(4));
+	p.orientation.z = std::stof(elems.at(5));
+	p.id = std::stoi(elems.at(6));
+	projectiles.push_back(std::shared_ptr<Projectile>(&p));
+}
+
 void Client::init()
 {
+	projectiles = std::list<std::shared_ptr<Projectile>>();
 	chars = (char*)malloc(sizeof(char)* 50);
 	HANDLE  hThreadArray;
 	DWORD   dwThreadIdArray;
@@ -149,18 +162,35 @@ void Client::init()
 	);
 }
 
+void Client::rotate(float x, float y)
+{
+	PlayerGL * p = getPlayerAt(selfId);
+	if (p->doRoation(x, y))
+	{
+		sendMessage(std::string("R-") +
+			std::string("-") + std::to_string(p->getOrientation().x) +
+			std::string("-") + std::to_string(p->getOrientation().y) +
+			std::string("-") + std::to_string(p->getOrientation().z) +
+			std::string("-") + std::to_string(selfId));
+	}
+
+
+};
+
 void Client::fire()
 {
 	sendMessage(std::string("T")); // Le client envoie juste le fait qu'il tire (le serveur envoi le projectile en face de la position réélle du joueur)
 }
 
-void Client::move()
+void Client::gameLoopStep(float micro)
 {
-	PlayerGL* p = getPlayerAt(selfId);
-	sendMessage(std::string("R-")+
-		std::string("-") + std::to_string(p->getOrientation().x) +
-		std::string("-") + std::to_string(p->getOrientation().y) +
-		std::string("-") + std::to_string(p->getOrientation().z) +
-		std::string("-") + std::to_string(selfId));
+	for each (auto p in players)
+	{
+		p.updatePos(micro);
+	}
+	for each (auto p in projectiles)
+	{
+		p->position += p->orientation;
+	}
 }
 
