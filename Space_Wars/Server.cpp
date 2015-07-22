@@ -48,7 +48,7 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 
 void Server::newClientConnection(std::shared_ptr<NetworkClient> client)
 {
-	sendOneClientCoordToAllClients(client, true);
+	sendOneClientCoordToAllClients(client, true, client);
 	sendAllClientsCoordToOneClient(client, true);
 	sendMessageToOneClient(client, std::string("Y;") + std::to_string(client->id));
 	for each (std::shared_ptr<Projectile> p in projectiles)
@@ -73,9 +73,9 @@ void Server::sendAllClientsCoordToAllClients(bool n)
 	}
 }
 
-void Server::sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> client, bool n)
+void Server::sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> client, bool n, std::shared_ptr<NetworkClient> exclude)
 {
-	sendMessageToAllClients(createCoordMessage(client, n));
+	sendMessageToAllClients(createCoordMessage(client, n), exclude);
 }
 
 void Server::sendAllClientsCoordToOneClient(std::shared_ptr<NetworkClient> listener, bool n)
@@ -107,11 +107,12 @@ std::string Server::createCoordMessage(std::shared_ptr<NetworkClient> client, bo
 		std::string(";") + std::to_string(client->orientation.z);
 }
 
-void Server::sendMessageToAllClients(std::string message)
+void Server::sendMessageToAllClients(std::string message, std::shared_ptr<NetworkClient> exclude)
 {
 	for each (auto c in clients)
 	{
-		sendMessageToOneClient(c, message);
+		if (exclude == nullptr || c->id != exclude->id)
+			sendMessageToOneClient(c, message);
 	}
 }
 
@@ -233,21 +234,21 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 
 void Server::createProjectile(std::shared_ptr<NetworkClient> c)
 {
-	Projectile p = Projectile();
-	p.id = nb_projectiles_all_time++;
-	p.position = c->pos;
-	p.orientation = c->orientation * 2.0f;
-	sendMessageToAllClients(std::string("T;") + std::to_string(p.position.x) +
-		std::string(";") + std::to_string(p.position.y) +
-		std::string(";") + std::to_string(p.position.z) +
-		std::string(";") + std::to_string(p.orientation.x) +
-		std::string(";") + std::to_string(p.orientation.y) +
-		std::string(";") + std::to_string(p.orientation.z) +
-		std::string(";") + std::to_string(p.id) +
+	std::shared_ptr<Projectile> p = std::shared_ptr<Projectile>(new Projectile());
+	p->id = nb_projectiles_all_time++;
+	p->position = c->pos;
+	p->orientation = c->orientation * 2.0f;
+	sendMessageToAllClients(std::string("T;") + std::to_string(p->position.x) +
+		std::string(";") + std::to_string(p->position.y) +
+		std::string(";") + std::to_string(p->position.z) +
+		std::string(";") + std::to_string(p->orientation.x) +
+		std::string(";") + std::to_string(p->orientation.y) +
+		std::string(";") + std::to_string(p->orientation.z) +
+		std::string(";") + std::to_string(p->id) +
 		std::string(";") + std::to_string(c->id)
 	);
-	p.owner = c;
-	projectiles.push_back(std::shared_ptr<Projectile>(&p));
+	p->owner = c;
+	projectiles.push_back(std::shared_ptr<Projectile>(p));
 }
 
 void Server::listenForClientsConnections(SOCKADDR_IN sin, SOCKET sock)
