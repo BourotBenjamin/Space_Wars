@@ -12,6 +12,7 @@ class PlayerGL
 {
 public:
 	PlayerGL();
+	PlayerGL(const PlayerGL& p){ *this = p; }
 	~PlayerGL();
 
 	bool operator== (PlayerGL const &p)

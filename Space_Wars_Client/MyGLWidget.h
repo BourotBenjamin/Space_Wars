@@ -20,6 +20,9 @@ protected:
 	Vaisseau * ship;
 	ProjectileGL * projectile;
 
+	std::vector<std::shared_ptr<PlayerGL>> backup;
+	std::vector<std::shared_ptr<Projectile>> backupProj;
+
 	QPoint lastPos;
 
 	Mat4x4 projection;

@@ -37,13 +37,21 @@ void MyGLWidget::initializeGL()
 
 void MyGLWidget::paintGL()
 {
+	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
+	{
+		backup.push_back((*it));
+	}
+	for (auto it = c->getProj().begin(); it != c->getProj().end(); ++it)
+	{
+		backupProj.push_back((*it));
+	}
 	glViewport(0, 0, width(), height());
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	cam.lookAt(modelView);
 	
 	Mat4x4 world;
-	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
+	for (auto it = backup.begin(); it != backup.end(); ++it)
 	{
 		std::shared_ptr<PlayerGL> p = (*it);
 		glm::vec3 ppos = p->getPos();
@@ -55,11 +63,11 @@ void MyGLWidget::paintGL()
 	}
 	std::shared_ptr<PlayerGL> plGL = c->getPlayerAt(c->getSelfID());
 	glm::vec3 posplGL = plGL->getPos();
-	cam.setPosition(Point2(posplGL.x, posplGL.y+2, posplGL.z-2));
+	cam.setPosition(Point2(posplGL.x+1, posplGL.y+1, posplGL.z-2));
 	glm::vec3 orplGL = plGL->getOrientation();
 	cam.setPointcible(Point2(-orplGL.x, -orplGL.y, -orplGL.z));
 
-	for (auto it = c->getProj().begin(); it != c->getProj().end(); ++it)
+	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
 	{
 		glm::vec3 ppos = (*it)->position;
 		world.identity();
