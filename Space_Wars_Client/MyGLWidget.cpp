@@ -37,6 +37,7 @@ void MyGLWidget::initializeGL()
 
 void MyGLWidget::initGlDataToDraw()
 {
+	std::cout << "lock openGL" << std::endl;
 	c->cv_m.lock();
 	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
 	{
@@ -49,6 +50,7 @@ void MyGLWidget::initGlDataToDraw()
 		backupProj.push_back((*it));
 	}
 	c->cv_m.unlock();
+	std::cout << "unlock openGL" << std::endl;
 }
 
 void MyGLWidget::paintGL()
