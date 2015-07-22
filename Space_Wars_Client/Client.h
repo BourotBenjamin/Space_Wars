@@ -36,6 +36,7 @@ public:
 	int getPlayerSize(){ return players.size(); }
 	int getProjectileSize(){ return projectiles.size(); }
 	std::list<std::shared_ptr<Projectile>>& getProj() { return projectiles; }
+	std::list<std::shared_ptr<PlayerGL>>& getPlayers() { return players; }
 
 	std::shared_ptr<PlayerGL> getPlayerAt(int index);
 	int getSelfID(){ return selfId; }

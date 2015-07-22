@@ -43,9 +43,9 @@ void MyGLWidget::paintGL()
 	cam.lookAt(modelView);
 	
 	Mat4x4 world;
-	for (int i = 0; i < c->getPlayerSize(); i++)
+	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
 	{
-		std::shared_ptr<PlayerGL> p = c->getPlayerAt(i);
+		std::shared_ptr<PlayerGL> p = (*it);
 		glm::vec3 ppos = p->getPos();
 		world.identity();
 		world.translate(ppos.x, ppos.y, ppos.z);
@@ -63,7 +63,7 @@ void MyGLWidget::paintGL()
 		world.rotateX(p->getAngleX());
 		world.rotateX(p->getAngleY());
 		*/
-		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
+		projectile->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
 
 	/*for (int i = 0; i < c->getProjectileSize(); i++)
