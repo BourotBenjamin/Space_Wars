@@ -25,6 +25,8 @@ protected:
 	Mat4x4 projection;
 	Mat4x4 modelView;
 
+	bool entered;
+
 	float anglex;
 	float angley;
 
