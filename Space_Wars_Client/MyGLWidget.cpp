@@ -49,20 +49,25 @@ void MyGLWidget::paintGL()
 		glm::vec3 ppos = p->getPos();
 		world.identity();
 		world.translate(ppos.x, ppos.y, ppos.z);
-		world.rotateX(p->getAngleX());
-		world.rotateX(p->getAngleY());
+		//world.rotateX(p->getAngleX());
+		//world.rotateX(p->getAngleY());
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
+	/*std::shared_ptr<PlayerGL> plGL = c->getPlayerAt(c->getSelfID());
+	glm::vec3 posplGL = plGL->getPos();
+	cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
+	glm::vec3 orplGL = plGL->getOrientation();
+	cam.setPointcible(Point2(orplGL.x, orplGL.y, orplGL.z));*/
 
 	for (auto it = c->getProj().begin(); it != c->getProj().end(); ++it)
 	{
 		glm::vec3 ppos = (*it)->position;
 		world.identity();
 		world.translate(ppos.x, ppos.y, ppos.z);
-		/*
-		world.rotateX(p->getAngleX());
-		world.rotateX(p->getAngleY());
-		*/
+		
+		//world.rotateX(p->getAngleX());
+		//world.rotateX(p->getAngleY());
+		
 		projectile->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
 
@@ -76,17 +81,17 @@ void MyGLWidget::paintGL()
 		world.rotateX(p->getAngleY());
 		lol->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}*/
-	/*world.identity();
+	world.identity();
 	world.translate(1, 0, 4);
-	lol->draw(projection, modelView, world, Point2(1.f,0.f,0.f), cam.getPos(), cam.getOrientation());
+	ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 
 	world.identity();
 	world.translate(-1, 0, 10);
-	lol->draw(projection, modelView, world, Point2(0.f, 1.f, 0.f), cam.getPos(), cam.getOrientation());
+	ship->draw(projection, modelView, world, Point2(0.f, 1.f, 0.f), cam.getPos(), cam.getOrientation());
 
 	world.identity();
 	world.translate(0, 2, 0);
-	lol->draw(projection, modelView, world, Point2(0.f, 0.f, 1.f), cam.getPos(), cam.getOrientation());*/
+	ship->draw(projection, modelView, world, Point2(0.f, 0.f, 1.f), cam.getPos(), cam.getOrientation()); 
 	
 }
 

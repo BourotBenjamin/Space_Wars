@@ -30,6 +30,6 @@ void main(void)
 
 	vec3 L = normalize(-v_lightPos + v_lightDirection);
 	float NdotL = max(dot(v_normal, L), 0.0);
-	
+	NdotL = 1.;
 	v_color = vec4(u_color, 1.0) * NdotL;
 }
