@@ -21,7 +21,6 @@ MainWidget::MainWidget()
 	hLayout->addWidget(newGL);
 
 	resize(1200, 800);
-	newGL->repaint();
 }
 
 

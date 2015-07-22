@@ -146,13 +146,11 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent * e)
 	QCursor::setPos(glob);
 	lastPos = QPoint(width() / 2, height() / 2);
 	QGLWidget::mouseMoveEvent(e);*/
-	repaint();
 }
 
 void MyGLWidget::mouseReleaseEvent(QMouseEvent * e)
 {
 	
-	repaint();
 }
 
 void MyGLWidget::resizeEvent(QResizeEvent *e)
@@ -169,90 +167,30 @@ bool MyGLWidget::event(QEvent *e)
 		if (ke->key() == Qt::Key_Left) {
 			cam.deplacer(2, 0, 0);
 			cam.lookAt(modelView);
-			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Right) {
 			cam.deplacer(3, 0, 0);
 			cam.lookAt(modelView);
-			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Up) {
 			cam.deplacer(0, 0, 0);
 			cam.lookAt(modelView);
-			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Down) {
 			cam.deplacer(1, 0, 0);
 			cam.lookAt(modelView);
-			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Space) {
 			cam.setPosition(Point2(0, 0, -7.f));
 			modelView.identity();
 			cam.lookAt(modelView);
-			repaint();
 			return true;
 		}
 	}
 
 	return QWidget::event(e);
 }
-
-/*bool MyGLWidget::event(QEvent *e)
-{
-	if (e->type() == QEvent::KeyPress) {
-		QKeyEvent *ke = static_cast<QKeyEvent *>(e);
-		if (ke->key() == Qt::Key_Left) {
-			anglex += 5.73;
-			cam.deplacer(2, 5.73f,0);
-			cam.lookAt(modelView);
-			repaint();
-			return true;
-		}
-		if (ke->key() == Qt::Key_Right) {
-			//cam.setPosition(Point(cam.getPos().Getx() + 0.1, cam.getPos().Gety(), cam.getPos().Getz()));
-			anglex -= 5.73;
-			cam.deplacer(3, -5.73f, 0);
-			cam.lookAt(modelView);
-			repaint();
-			return true;
-		}
-		if (ke->key() == Qt::Key_Up) {
-			//cam.setPosition(Point(cam.getPos().Getx(), cam.getPos().Gety() - 0.1, cam.getPos().Getz()));
-			angley -= 5.73;
-			cam.deplacer(0, 0, -5.73f);
-			cam.lookAt(modelView);
-			repaint();
-			return true;
-		}
-		if (ke->key() == Qt::Key_Down) {
-			//cam.setPosition(Point(cam.getPos().Getx(), cam.getPos().Gety() + 0.1, cam.getPos().Getz()));
-			angley += 5.73;
-			cam.deplacer(1, 0, 5.73f);
-			cam.lookAt(modelView);
-			repaint();
-			return true;
-		}
-		if (ke->key() == Qt::Key_Space) {
-			cam.setPosition(Point2(0, 0, -7.f));
-			modelView.identity();
-			cam.lookAt(modelView);
-			repaint();
-			return true;
-		}
-		if (ke->key() == Qt::Key_Plus) {
-			m_z += 0.2;
-			return true;
-		}
-		if (ke->key() == Qt::Key_Minus) {
-			m_z -= 0.2;
-			return true;
-		}
-	}
-
-	return QWidget::event(e);
-}*/
