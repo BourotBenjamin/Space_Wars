@@ -29,11 +29,6 @@ protected:
 	int vbosize;
 	int ebosize;
 
-	char r;
-	char v;
-	char b;
-	
-
 	GLuint m_vboID;
 	GLuint m_vaoID;
 	GLuint m_triangleEBO;

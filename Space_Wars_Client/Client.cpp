@@ -24,6 +24,7 @@ void Client::createPlayer(std::string& str)
 	std::vector<std::string> elems = split(str, '-');
 	PlayerGL* p = new PlayerGL();
 	p->setId(std::stoi(elems.at(1)));
+	float f = std::stof(elems.at(2));
 	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
 	p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
 	players.push_back(std::shared_ptr<PlayerGL>(std::move(p)));

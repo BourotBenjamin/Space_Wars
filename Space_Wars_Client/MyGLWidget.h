@@ -2,13 +2,11 @@
 #define MY_GL_WIDGET
 
 #include "Client.h"
-#include "Cube.h"
+#include "Vaisseau.h"
+#include "Projectile.h"
 #include <QtOpenGL\qglWidget>
 #include "Mat4x4.h"
 #include "Camera.h"
-#include "Cube.h"
-#include "Vaisseau.h"
-#include "Projectile.h"
 
 class Army;
 
