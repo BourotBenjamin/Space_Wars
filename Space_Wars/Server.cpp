@@ -205,10 +205,11 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 		if (size > 0)
 		{
 			std::cout << std::string(chars, chars + size) << std::endl;
+			std::string s(chars, chars + size);
 			switch (chars[0])
 			{
 			case 'R':
-				updateRotation(c, std::string(chars));
+				updateRotation(c, s);
 				sendOneClientCoordToAllClients(c, false);
 				break;
 			case 'T':
