@@ -70,10 +70,13 @@ void MyGLWidget::paintGL()
 		world.rotateX(p->getAngleY());
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
-	glm::vec3 posplGL = player->getPos();
-	cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z)-cam.getOrientation()*2);
-	glm::vec3 orplGL = player->getOrientation();
-	cam.setPointcible(Point2(-orplGL.x, -orplGL.y, -orplGL.z));
+	if (player)
+	{
+		glm::vec3 posplGL = player->getPos();
+		cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z)-cam.getOrientation()*2);
+		glm::vec3 orplGL = player->getOrientation();
+		cam.setPointcible(Point2(-orplGL.x, -orplGL.y, -orplGL.z));
+	}
 
 	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
 	{

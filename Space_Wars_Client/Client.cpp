@@ -137,8 +137,12 @@ void Client::collision(std::string& str)
 {
 	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
-	getPlayerAt(std::stoi(elems.at(1)))->moveBackward();
-	getPlayerAt(std::stoi(elems.at(2)))->moveBackward();
+	std::shared_ptr<PlayerGL> p = getPlayerAt(std::stoi(elems.at(1)));
+	if (p)
+		p->moveBackward();
+	p = getPlayerAt(std::stoi(elems.at(2)));
+	if (p)
+		p->moveBackward();
 	cv_m.unlock();
 }
 
@@ -208,7 +212,7 @@ void Client::rotate(float x, float y)
 {
 	cv_m.lock();
 	std::shared_ptr<PlayerGL> p = getPlayerAt(selfId);
-	if (p->doRoation(x, y))
+	if (p && p->doRoation(x, y))
 	{
 		sendMessage(std::string("R;")
 			+ std::to_string(p->getOrientation().x) +
