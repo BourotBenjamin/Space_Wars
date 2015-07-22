@@ -35,8 +35,9 @@ void MyGLWidget::initializeGL()
 
 }
 
-void MyGLWidget::paintGL()
+void MyGLWidget::initGlDataToDraw()
 {
+	c->cv_m.lock();
 	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
 	{
 		backup.push_back((*it));
@@ -47,6 +48,12 @@ void MyGLWidget::paintGL()
 	{
 		backupProj.push_back((*it));
 	}
+	c->cv_m.unlock();
+}
+
+void MyGLWidget::paintGL()
+{
+	initGlDataToDraw();
 	glViewport(0, 0, width(), height());
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -64,15 +71,21 @@ void MyGLWidget::paintGL()
 		world.rotateY(p->getAngleY());
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
-	glm::vec3 posplGL = player->getPos();
-	cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
-	if (!entered)
+
+	if (player)
 	{
+		glm::vec3 posplGL = player->getPos();
+		cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
+		if (!entered)
+		{
+			glm::vec3 orplGL = player->getOrientation();
+			cam.orienter(-90, 0);
+		}
 		glm::vec3 orplGL = player->getOrientation();
-		cam.orienter(-90, 0);
+		cam.deplacer(1, 0, 0);
+
 	}
-	glm::vec3 orplGL = player->getOrientation();
-	cam.deplacer(1, 0, 0);
+
 	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
 	{
 		glm::vec3 ppos = (*it)->position;
