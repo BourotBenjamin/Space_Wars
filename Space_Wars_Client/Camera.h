@@ -32,6 +32,8 @@ public:
     void lookAt(Mat4x4 &modelview);
 	Point2 getPos();
 	Point2 getOrientation(){ return m_orientation; }
+	Point2 getstraff(){ return m_deplacementLateral; }
+	Point2 getAxeV(){ return m_axeVertical; }
 	void setPointcible(Point2 pointCible);
 	void setPosition(Point2 position);
 

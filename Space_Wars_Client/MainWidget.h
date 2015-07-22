@@ -11,6 +11,7 @@ public:
 	MainWidget();
 	~MainWidget();
 
+	void start();
 
 private:
 

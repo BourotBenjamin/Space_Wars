@@ -59,15 +59,20 @@ void MyGLWidget::paintGL()
 		glm::vec3 ppos = p->getPos();
 		world.identity();
 		world.translate(ppos.x, ppos.y, ppos.z);
+		world.rotateY(-90.f);
 		world.rotateX(p->getAngleX());
-		world.rotateX(p->getAngleY());
+		world.rotateY(p->getAngleY());
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
 	glm::vec3 posplGL = player->getPos();
-	cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z)-cam.getOrientation()*2);
+	cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
+	if (!entered)
+	{
+		glm::vec3 orplGL = player->getOrientation();
+		cam.orienter(-90, 0);
+	}
 	glm::vec3 orplGL = player->getOrientation();
-	cam.setPointcible(Point2(-orplGL.x, -orplGL.y, -orplGL.z));
-
+	cam.deplacer(1, 0, 0);
 	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
 	{
 		glm::vec3 ppos = (*it)->position;
@@ -122,7 +127,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent * e)
 	//cam.orienter(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
 	m_oldMousePos = Point2(e->x(), e->y(), m_z);
 
-	c->rotate(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
+	c->rotate((e->x() - m_oldMousePos.Getx())/0.05, (e->y() - m_oldMousePos.Gety())/0.05);
 
 	/*QPoint glob = mapToGlobal(QPoint(width() / 2, height() / 2));
 	QCursor::setPos(glob);

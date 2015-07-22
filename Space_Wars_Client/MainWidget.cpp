@@ -29,3 +29,8 @@ MainWidget::~MainWidget()
 {
 }
 
+void MainWidget::start()
+{
+
+}
+
