@@ -49,17 +49,17 @@ void Server::newClientConnection(std::shared_ptr<NetworkClient> client)
 {
 	sendOneClientCoordToAllClients(client, true);
 	sendAllClientsCoordToOneClient(client, true);
-	sendMessageToOneClient(client, std::string("Y-") + std::to_string(client->id));
+	sendMessageToOneClient(client, std::string("Y;") + std::to_string(client->id));
 	for each (std::shared_ptr<Projectile> p in projectiles)
 	{
-		sendMessageToOneClient(client, std::string("T-") + std::to_string(p->position.x) +
-			std::string("-") + std::to_string(p->position.y) +
-			std::string("-") + std::to_string(p->position.z) +
-			std::string("-") + std::to_string(p->orientation.x) +
-			std::string("-") + std::to_string(p->orientation.y) +
-			std::string("-") + std::to_string(p->orientation.z) +
-			std::string("-") + std::to_string(p->id) +
-			std::string("-") + std::to_string(p->owner->id)
+		sendMessageToOneClient(client, std::string("T;") + std::to_string(p->position.x) +
+			std::string(";") + std::to_string(p->position.y) +
+			std::string(";") + std::to_string(p->position.z) +
+			std::string(";") + std::to_string(p->orientation.x) +
+			std::string(";") + std::to_string(p->orientation.y) +
+			std::string(";") + std::to_string(p->orientation.z) +
+			std::string(";") + std::to_string(p->id) +
+			std::string(";") + std::to_string(p->owner->id)
 			);
 	}
 }
@@ -94,16 +94,16 @@ std::string Server::createCoordMessage(std::shared_ptr<NetworkClient> client, bo
 {
 	std::string s1;
 	if (n)
-		s1 = std::string("N-");
+		s1 = std::string("N;");
 	else
-		s1 = std::string("P-");
+		s1 = std::string("P;");
 	return s1 + std::to_string(client->id) +
-		std::string("-") + std::to_string(client->pos.x) +
-		std::string("-") + std::to_string(client->pos.y) +
-		std::string("-") + std::to_string(client->pos.z) +
-		std::string("-") + std::to_string(client->orientation.x) +
-		std::string("-") + std::to_string(client->orientation.y) +
-		std::string("-") + std::to_string(client->orientation.z);
+		std::string(";") + std::to_string(client->pos.x) +
+		std::string(";") + std::to_string(client->pos.y) +
+		std::string(";") + std::to_string(client->pos.z) +
+		std::string(";") + std::to_string(client->orientation.x) +
+		std::string(";") + std::to_string(client->orientation.y) +
+		std::string(";") + std::to_string(client->orientation.z);
 }
 
 void Server::sendMessageToAllClients(std::string message)
@@ -174,7 +174,7 @@ void Server::recivePingFromClient(std::shared_ptr<NetworkClient> c)
 
 void Server::removeClientDependencies(std::shared_ptr<NetworkClient> c)
 {
-	sendMessageToAllClients(std::string("X-") + std::to_string(c->id));
+	sendMessageToAllClients(std::string("X;") + std::to_string(c->id));
 	nb_clients--;
 	closesocket(c->sock);
 	CloseHandle(c->threadHandle); // Termine le thread listen message for this player
@@ -187,7 +187,7 @@ void Server::removeClientFromList(std::shared_ptr<NetworkClient> c)
 
 void Server::updateRotation(std::shared_ptr<NetworkClient> c, std::string str)
 {
-	std::vector<std::string> elems = split(str, '-');
+	std::vector<std::string> elems = split(str, ';');
 	c->orientation.x = std::stof(elems.at(1));
 	c->orientation.y = std::stof(elems.at(2));
 	c->orientation.z = std::stof(elems.at(3));
@@ -205,10 +205,11 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 		if (size > 0)
 		{
 			std::cout << std::string(chars, chars + size) << std::endl;
+			std::string s(chars, chars + size);
 			switch (chars[0])
 			{
 			case 'R':
-				updateRotation(c, std::string(chars));
+				updateRotation(c, s);
 				sendOneClientCoordToAllClients(c, false);
 				break;
 			case 'T':
@@ -235,14 +236,14 @@ void Server::createProjectile(std::shared_ptr<NetworkClient> c)
 	p.id = nb_projectiles_all_time++;
 	p.position = c->pos;
 	p.orientation = c->orientation * 2.0f;
-	sendMessageToAllClients(std::string("T-") + std::to_string(p.position.x) +
-		std::string("-") + std::to_string(p.position.y) +
-		std::string("-") + std::to_string(p.position.z) +
-		std::string("-") + std::to_string(p.orientation.x) +
-		std::string("-") + std::to_string(p.orientation.y) +
-		std::string("-") + std::to_string(p.orientation.z) +
-		std::string("-") + std::to_string(p.id) +
-		std::string("-") + std::to_string(c->id)
+	sendMessageToAllClients(std::string("T;") + std::to_string(p.position.x) +
+		std::string(";") + std::to_string(p.position.y) +
+		std::string(";") + std::to_string(p.position.z) +
+		std::string(";") + std::to_string(p.orientation.x) +
+		std::string(";") + std::to_string(p.orientation.y) +
+		std::string(";") + std::to_string(p.orientation.z) +
+		std::string(";") + std::to_string(p.id) +
+		std::string(";") + std::to_string(c->id)
 	);
 	p.owner = c;
 	projectiles.push_back(std::shared_ptr<Projectile>(&p));
@@ -334,8 +335,8 @@ void Server::gameLoop()
 			{
 				if (c2->id != c->id && std::abs(glm::distance(c->pos, c2->pos)) < crashRange)
 				{
-					sendMessageToAllClients(std::string("C-") + std::to_string(c->id) +
-						std::string("-") + std::to_string(c2->id));
+					sendMessageToAllClients(std::string("C;") + std::to_string(c->id) +
+						std::string(";") + std::to_string(c2->id));
 					c->pos -= c->orientation;
 					c2->pos -= c->orientation;
 				}
@@ -348,9 +349,9 @@ void Server::gameLoop()
 			{
 				if (p->owner->id != c->id && std::abs(glm::distance(c->pos, p->position)) < projectileRange)
 				{
-					sendMessageToAllClients(std::string("S-") + std::to_string(p->id) +
-						std::string("-") + std::to_string(p->owner->id) +
-						std::string("-") + std::to_string(c->id));
+					sendMessageToAllClients(std::string("S;") + std::to_string(p->id) +
+						std::string(";") + std::to_string(p->owner->id) +
+						std::string(";") + std::to_string(c->id));
 					p->owner->score++;
 					c->score--;
 				}

@@ -21,7 +21,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 void Client::createPlayer(std::string& str)
 {
-	std::vector<std::string> elems = split(str, '-');
+	std::vector<std::string> elems = split(str, ';');
 	PlayerGL* p = new PlayerGL();
 	p->setId(std::stoi(elems.at(1)));
 	float f = std::stof(elems.at(2));
@@ -42,7 +42,7 @@ std::shared_ptr<PlayerGL> Client::getPlayerAt(int index)
 
 void Client::updatePlayer(std::string& str)
 {
-	std::vector<std::string> elems = split(str, '-');
+	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<PlayerGL> p = getPlayerAt(std::stoi(elems.at(1)));
 
 	p->setId(std::stoi(elems.at(1)));
@@ -52,7 +52,7 @@ void Client::updatePlayer(std::string& str)
 
 void Client::removePlayer(std::string& str)
 {
-	std::vector<std::string> elems = split(str, '-');
+	std::vector<std::string> elems = split(str, ';');
 	int i = std::stoi(elems.at(1));
 	players.remove_if([i](std::shared_ptr<PlayerGL> p){ return p->getId() == i; });
 }
@@ -116,7 +116,7 @@ int Client::listenForMessage()
 				createProjectile(s);
 				break;
 			case 'Y':
-				std::vector<std::string> elems = split(s, '-');
+				std::vector<std::string> elems = split(s, ';');
 				selfId = std::stoi(elems.at(1));
 				break;
 			}
@@ -128,7 +128,7 @@ int Client::listenForMessage()
 
 void Client::collision(std::string& str)
 {
-	std::vector<std::string> elems = split(str, '-');
+	std::vector<std::string> elems = split(str, ';');
 	getPlayerAt(std::stoi(elems.at(1)))->moveBackward();
 	getPlayerAt(std::stoi(elems.at(2)))->moveBackward();
 }
@@ -140,7 +140,7 @@ void Client::sendMessage(std::string message)
 
 void Client::createProjectile(std::string& str)
 {
-	std::vector<std::string> elems = split(str, '-');
+	std::vector<std::string> elems = split(str, ';');
 	Projectile p;
 	p.position.x = std::stof(elems.at(1));
 	p.position.y = std::stof(elems.at(2));
@@ -157,7 +157,7 @@ void Client::createProjectile(std::string& str)
 
 void Client::removeProjectile(std::string& str)
 {
-	std::vector<std::string> elems = split(str, '-');
+	std::vector<std::string> elems = split(str, ';');
 	projectiles.remove_if([elems](std::shared_ptr<Projectile> p){
 		return std::stoi(elems.at(2)) == p->id;
 	});
@@ -196,11 +196,11 @@ void Client::rotate(float x, float y)
 	std::shared_ptr<PlayerGL> p = getPlayerAt(selfId);
 	if (p->doRoation(x, y))
 	{
-		sendMessage(std::string("R-") +
-			std::string("-") + std::to_string(p->getOrientation().x) +
-			std::string("-") + std::to_string(p->getOrientation().y) +
-			std::string("-") + std::to_string(p->getOrientation().z) +
-			std::string("-") + std::to_string(selfId));
+		sendMessage(std::string("R;")
+			+ std::to_string(p->getOrientation().x) +
+			std::string(";") + std::to_string(p->getOrientation().y) +
+			std::string(";") + std::to_string(p->getOrientation().z) +
+			std::string(";") + std::to_string(selfId));
 	}
 
 
