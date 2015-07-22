@@ -41,6 +41,8 @@ void MyGLWidget::initGlDataToDraw()
 	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
 	{
 		backup.push_back((*it));
+		if ((*it)->getId() == c->getSelfID())
+			player = (*it);
 	}
 	for (auto it = c->getProj().begin(); it != c->getProj().end(); ++it)
 	{
@@ -68,10 +70,9 @@ void MyGLWidget::paintGL()
 		world.rotateX(p->getAngleY());
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
-	std::shared_ptr<PlayerGL> plGL = c->getPlayerAt(c->getSelfID());
-	glm::vec3 posplGL = plGL->getPos();
-	cam.setPosition(Point2(posplGL.x+1, posplGL.y+1, posplGL.z-2));
-	glm::vec3 orplGL = plGL->getOrientation();
+	glm::vec3 posplGL = player->getPos();
+	cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z)-cam.getOrientation()*2);
+	glm::vec3 orplGL = player->getOrientation();
 	cam.setPointcible(Point2(-orplGL.x, -orplGL.y, -orplGL.z));
 
 	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
@@ -125,7 +126,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent * e)
 	m_relativeMouse = Point2();
 	m_relativeMouse = Point2(e->x() - width() / 2, -e->y() + height() / 2, m_z) - (cam.getPos());
 	
-	cam.orienter(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
+	//cam.orienter(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
 	m_oldMousePos = Point2(e->x(), e->y(), m_z);
 
 	c->rotate(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
