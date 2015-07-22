@@ -23,6 +23,8 @@ protected:
 	std::vector<std::shared_ptr<PlayerGL>> backup;
 	std::vector<std::shared_ptr<Projectile>> backupProj;
 
+	std::shared_ptr<PlayerGL> player;
+
 	QPoint lastPos;
 
 	Mat4x4 projection;
