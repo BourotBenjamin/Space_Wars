@@ -45,7 +45,7 @@ void MyGLWidget::paintGL()
 	Mat4x4 world;
 	for (int i = 0; i < c->getPlayerSize(); i++)
 	{
-		PlayerGL * p = c->getPlayerAt(i);
+		std::shared_ptr<PlayerGL> p = c->getPlayerAt(i);
 		glm::vec3 ppos = p->getPos();
 		world.identity();
 		world.translate(ppos.x, ppos.y, ppos.z);

@@ -37,7 +37,7 @@ public:
 	int getProjectileSize(){ return projectiles.size(); }
 	std::list<std::shared_ptr<Projectile>>& getProj() { return projectiles; }
 
-	PlayerGL* getPlayerAt(int index);
+	std::shared_ptr<PlayerGL> getPlayerAt(int index);
 	int getSelfID(){ return selfId; }
 	void rotate(float x, float y);
 	void fire();
@@ -46,7 +46,7 @@ public:
 private:
 
 
-	std::list<PlayerGL> players;
+	std::list<std::shared_ptr<PlayerGL>> players;
 	std::list<std::shared_ptr<Projectile>> projectiles;
 	char* chars;
 	SOCKET sock;

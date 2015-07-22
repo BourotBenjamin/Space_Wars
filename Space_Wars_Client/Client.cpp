@@ -22,19 +22,19 @@ std::vector<std::string> split(const std::string &s, char delim) {
 void Client::createPlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
-	PlayerGL p;
-	p.setId(std::stoi(elems.at(1)));
-	p.setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
-	p.doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
-	players.push_back(p);
+	PlayerGL* p = new PlayerGL();
+	p->setId(std::stoi(elems.at(1)));
+	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
+	p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
+	players.push_back(std::shared_ptr<PlayerGL>(std::move(p)));
 }
 
-PlayerGL* Client::getPlayerAt(int index)
+std::shared_ptr<PlayerGL> Client::getPlayerAt(int index)
 {
-	for (auto it = players.begin(); it != players.end(); ++it)
+	for each(std::shared_ptr<PlayerGL> p in players)
 	{
-		if ((*it).getId() == index)
-			return &(*it);
+		if (p->getId() == index)
+			return p;
 	}
 	return nullptr;
 }
@@ -42,7 +42,7 @@ PlayerGL* Client::getPlayerAt(int index)
 void Client::updatePlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
-	PlayerGL* p = getPlayerAt(std::stoi(elems.at(1)));
+	std::shared_ptr<PlayerGL> p = getPlayerAt(std::stoi(elems.at(1)));
 
 	p->setId(std::stoi(elems.at(1)));
 	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
@@ -52,9 +52,8 @@ void Client::updatePlayer(std::string& str)
 void Client::removePlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
-	PlayerGL p;
-	p.setId( std::stoi(elems.at(1)));
-	players.remove(p);
+	int i = std::stoi(elems.at(1));
+	players.remove_if([i](std::shared_ptr<PlayerGL> p){ return p->getId() == i; });
 }
 
 Client::Client()
@@ -65,6 +64,10 @@ Client::Client()
 
 Client::~Client()
 {
+	for each(std::shared_ptr<PlayerGL> p in players)
+	{
+		p.reset();
+	}
 	sendMessage("X");
 	closesocket(sock);
 	WSACleanup();
@@ -125,10 +128,8 @@ int Client::listenForMessage()
 void Client::collision(std::string& str)
 {
 	std::vector<std::string> elems = split(str, '-');
-	PlayerGL* p = getPlayerAt(std::stoi(elems.at(1)));
-	p->moveBackward();
-	PlayerGL* p2 = getPlayerAt(std::stoi(elems.at(2)));
-	p2->moveBackward();
+	getPlayerAt(std::stoi(elems.at(1)))->moveBackward();
+	getPlayerAt(std::stoi(elems.at(2)))->moveBackward();
 }
 
 void Client::sendMessage(std::string message)
@@ -191,7 +192,7 @@ void Client::init()
 
 void Client::rotate(float x, float y)
 {
-	PlayerGL * p = getPlayerAt(selfId);
+	std::shared_ptr<PlayerGL> p = getPlayerAt(selfId);
 	if (p->doRoation(x, y))
 	{
 		sendMessage(std::string("R-") +
@@ -213,7 +214,7 @@ void Client::gameLoopStep(float micro)
 {
 	for each (auto p in players)
 	{
-		p.updatePos(micro);
+		p->updatePos(micro);
 	}
 	for each (auto p in projectiles)
 	{
