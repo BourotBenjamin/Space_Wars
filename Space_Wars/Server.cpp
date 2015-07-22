@@ -73,7 +73,7 @@ void Server::sendAllClientsCoordToAllClients(bool n)
 	}
 }
 
-void Server::sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> client, bool n, std::shared_ptr<NetworkClient> exclude = nullptr)
+void Server::sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> client, bool n, std::shared_ptr<NetworkClient> exclude)
 {
 	sendMessageToAllClients(createCoordMessage(client, n), exclude);
 }
@@ -107,7 +107,7 @@ std::string Server::createCoordMessage(std::shared_ptr<NetworkClient> client, bo
 		std::string(";") + std::to_string(client->orientation.z);
 }
 
-void Server::sendMessageToAllClients(std::string message, std::shared_ptr<NetworkClient> exclude = nullptr)
+void Server::sendMessageToAllClients(std::string message, std::shared_ptr<NetworkClient> exclude)
 {
 	for each (auto c in clients)
 	{
