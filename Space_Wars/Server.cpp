@@ -35,8 +35,9 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 	c->sock = csock;
 	c->name = std::string("Visiteur_") + std::to_string(nb_clients_all_time);
 	c->id = nb_clients_all_time;
-	c->pos = glm::vec3(rand() % 500, rand() % 500, rand() % 500);
-	c->orientation = glm::vec3(rand() % 500, rand() % 500, rand() % 500);
+	c->pos = glm::vec3(rand() % 50, rand() % 50, rand() % 50);
+	c->orientation = glm::vec3(rand() % 50, rand() % 50, rand() % 50);
+	glm::normalize(c->orientation);
 	c->ping = true;
 	c->pingAttemps = 0;
 	clients.push_back(c);
