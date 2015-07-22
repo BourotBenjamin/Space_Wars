@@ -81,9 +81,11 @@ void MyGLWidget::paintGL()
 		if (!entered)
 		{
 			glm::vec3 orplGL = player->getOrientation();
-			cam.orienter(-90, 0);
+			cam.orienter(player->getAngleX(), player->getAngleY());
 		}
 		glm::vec3 orplGL = player->getOrientation();
+		cam.deplacer(1, 0, 0);
+		cam.deplacer(1, 0, 0);
 		cam.deplacer(1, 0, 0);
 
 	}
@@ -95,7 +97,7 @@ void MyGLWidget::paintGL()
 		world.translate(ppos.x, ppos.y, ppos.z);
 		
 		//world.rotateX(p->getAngleX());
-		//world.rotateX(p->getAngleY());
+		//world.rotateY(p->getAngleY());
 		
 		projectile->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
@@ -169,21 +171,25 @@ bool MyGLWidget::event(QEvent *e)
 		if (ke->key() == Qt::Key_Left) {
 			cam.deplacer(2, 0, 0);
 			cam.lookAt(modelView);
+			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Right) {
 			cam.deplacer(3, 0, 0);
 			cam.lookAt(modelView);
+			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Up) {
 			cam.deplacer(0, 0, 0);
 			cam.lookAt(modelView);
+			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Down) {
 			cam.deplacer(1, 0, 0);
 			cam.lookAt(modelView);
+			repaint();
 			return true;
 		}
 		if (ke->key() == Qt::Key_Space) {
