@@ -74,12 +74,12 @@ private:
 	void updateRotation(std::shared_ptr<NetworkClient> c, std::string str);
 
 	void sendMessageToOneClient(std::shared_ptr<NetworkClient> listener, std::string message);
-	void sendMessageToAllClients(std::string message);
+	void sendMessageToAllClients(std::string message, std::shared_ptr<NetworkClient> exclude = nullptr);
 
 	std::string createCoordMessage(std::shared_ptr<NetworkClient> client, bool n);
 	void sendOneClientCoordToOneClient(std::shared_ptr<NetworkClient> client, std::shared_ptr<NetworkClient> listener, bool n);
 	void sendAllClientsCoordToOneClient(std::shared_ptr<NetworkClient> listener, bool n);
-	void sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> c, bool n);
+	void sendOneClientCoordToAllClients(std::shared_ptr<NetworkClient> c, bool n, std::shared_ptr<NetworkClient> exclude = nullptr);
 	void sendAllClientsCoordToAllClients(bool n);
 	int Server::pingAllClients();
 	void Server::recivePingFromClient(std::shared_ptr<NetworkClient> c);
