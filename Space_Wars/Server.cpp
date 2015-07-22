@@ -234,21 +234,21 @@ int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
 
 void Server::createProjectile(std::shared_ptr<NetworkClient> c)
 {
-	Projectile p = Projectile();
-	p.id = nb_projectiles_all_time++;
-	p.position = c->pos;
-	p.orientation = c->orientation * 2.0f;
-	sendMessageToAllClients(std::string("T;") + std::to_string(p.position.x) +
-		std::string(";") + std::to_string(p.position.y) +
-		std::string(";") + std::to_string(p.position.z) +
-		std::string(";") + std::to_string(p.orientation.x) +
-		std::string(";") + std::to_string(p.orientation.y) +
-		std::string(";") + std::to_string(p.orientation.z) +
-		std::string(";") + std::to_string(p.id) +
+	std::shared_ptr<Projectile> p = std::shared_ptr<Projectile>(new Projectile());
+	p->id = nb_projectiles_all_time++;
+	p->position = c->pos;
+	p->orientation = c->orientation * 2.0f;
+	sendMessageToAllClients(std::string("T;") + std::to_string(p->position.x) +
+		std::string(";") + std::to_string(p->position.y) +
+		std::string(";") + std::to_string(p->position.z) +
+		std::string(";") + std::to_string(p->orientation.x) +
+		std::string(";") + std::to_string(p->orientation.y) +
+		std::string(";") + std::to_string(p->orientation.z) +
+		std::string(";") + std::to_string(p->id) +
 		std::string(";") + std::to_string(c->id)
 	);
-	p.owner = c;
-	projectiles.push_back(std::shared_ptr<Projectile>(&p));
+	p->owner = c;
+	projectiles.push_back(std::shared_ptr<Projectile>(p));
 }
 
 void Server::listenForClientsConnections(SOCKADDR_IN sin, SOCKET sock)
