@@ -35,8 +35,9 @@ void MyGLWidget::initializeGL()
 
 }
 
-void MyGLWidget::paintGL()
+void MyGLWidget::initGlDataToDraw()
 {
+	c->cv_m.lock();
 	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
 	{
 		backup.push_back((*it));
@@ -45,6 +46,12 @@ void MyGLWidget::paintGL()
 	{
 		backupProj.push_back((*it));
 	}
+	c->cv_m.unlock();
+}
+
+void MyGLWidget::paintGL()
+{
+	initGlDataToDraw();
 	glViewport(0, 0, width(), height());
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -11,6 +11,8 @@
 #include <list>
 #include <memory>
 #include <algorithm>
+#include <condition_variable>
+#include <thread>
 #include "PlayerGL.h"
 #include <glm/gtx/vector_angle.hpp>
 
@@ -43,6 +45,8 @@ public:
 	void rotate(float x, float y);
 	void fire();
 	void gameLoopStep(float micro);
+
+	std::mutex cv_m; // This mutex is used for three purposes:
 
 private:
 

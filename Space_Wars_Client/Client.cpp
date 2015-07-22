@@ -21,6 +21,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 void Client::createPlayer(std::string& str)
 {
+	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<PlayerGL> p = std::shared_ptr<PlayerGL>(new PlayerGL());
 	p->setId(std::stoi(elems.at(1)));
@@ -28,6 +29,7 @@ void Client::createPlayer(std::string& str)
 	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
 	p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
 	players.push_back(p);
+	cv_m.unlock();
 }
 
 std::shared_ptr<PlayerGL> Client::getPlayerAt(int index)
@@ -42,19 +44,25 @@ std::shared_ptr<PlayerGL> Client::getPlayerAt(int index)
 
 void Client::updatePlayer(std::string& str)
 {
+	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<PlayerGL> p = getPlayerAt(std::stoi(elems.at(1)));
-
-	p->setId(std::stoi(elems.at(1)));
-	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
-	p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
+	if (p)
+	{
+		p->setId(std::stoi(elems.at(1)));
+		p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
+		p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
+	}
+	cv_m.unlock();
 }
 
 void Client::removePlayer(std::string& str)
 {
+	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	int i = std::stoi(elems.at(1));
 	players.remove_if([i](std::shared_ptr<PlayerGL> p){ return p->getId() == i; });
+	cv_m.unlock();
 }
 
 Client::Client()
@@ -127,9 +135,11 @@ int Client::listenForMessage()
 
 void Client::collision(std::string& str)
 {
+	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	getPlayerAt(std::stoi(elems.at(1)))->moveBackward();
 	getPlayerAt(std::stoi(elems.at(2)))->moveBackward();
+	cv_m.unlock();
 }
 
 void Client::sendMessage(std::string message)
@@ -139,6 +149,7 @@ void Client::sendMessage(std::string message)
 
 void Client::createProjectile(std::string& str)
 {
+	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<Projectile> p = std::shared_ptr<Projectile>(new Projectile());
 	p->position.x = std::stof(elems.at(1));
@@ -152,14 +163,17 @@ void Client::createProjectile(std::string& str)
 	p->angleX = glm::orientedAngle(glm::vec3(1.0f, 0.0f, 0.0f), p->orientation, glm::vec3(0.0f, 0.0f, 1.0f));
 	p->angleY = glm::orientedAngle(glm::vec3(0.0f, 1.0f, 0.0f), p->orientation, glm::vec3(0.0f, 0.0f, 1.0f));
 	projectiles.push_back(std::shared_ptr<Projectile>(p));
+	cv_m.unlock();
 }
 
 void Client::removeProjectile(std::string& str)
 {
+	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	projectiles.remove_if([elems](std::shared_ptr<Projectile> p){
 		return std::stoi(elems.at(2)) == p->id;
 	});
+	cv_m.unlock();
 }
 
 void Client::init()
@@ -192,6 +206,7 @@ void Client::init()
 
 void Client::rotate(float x, float y)
 {
+	cv_m.lock();
 	std::shared_ptr<PlayerGL> p = getPlayerAt(selfId);
 	if (p->doRoation(x, y))
 	{
@@ -201,8 +216,7 @@ void Client::rotate(float x, float y)
 			std::string(";") + std::to_string(p->getOrientation().z) +
 			std::string(";") + std::to_string(selfId));
 	}
-
-
+	cv_m.unlock();
 };
 
 void Client::fire()
