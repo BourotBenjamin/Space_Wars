@@ -141,18 +141,18 @@ void Client::sendMessage(std::string message)
 void Client::createProjectile(std::string& str)
 {
 	std::vector<std::string> elems = split(str, ';');
-	Projectile p;
-	p.position.x = std::stof(elems.at(1));
-	p.position.y = std::stof(elems.at(2));
-	p.position.z = std::stof(elems.at(3));
-	p.orientation.x = std::stof(elems.at(4));
-	p.orientation.y = std::stof(elems.at(5));
-	p.orientation.z = std::stof(elems.at(6));
-	p.id = std::stoi(elems.at(7));
-	p.owner_id = std::stoi(elems.at(8));
-	p.angleX = glm::orientedAngle(glm::vec3(1.0f, 0.0f, 0.0f), p.orientation, glm::vec3(0.0f, 0.0f, 1.0f));
-	p.angleY = glm::orientedAngle(glm::vec3(0.0f, 1.0f, 0.0f), p.orientation, glm::vec3(0.0f, 0.0f, 1.0f));
-	projectiles.push_back(std::shared_ptr<Projectile>(&p));
+	std::shared_ptr<Projectile> p = std::shared_ptr<Projectile>(new Projectile());
+	p->position.x = std::stof(elems.at(1));
+	p->position.y = std::stof(elems.at(2));
+	p->position.z = std::stof(elems.at(3));
+	p->orientation.x = std::stof(elems.at(4));
+	p->orientation.y = std::stof(elems.at(5));
+	p->orientation.z = std::stof(elems.at(6));
+	p->id = std::stoi(elems.at(7));
+	p->owner_id = std::stoi(elems.at(8));
+	p->angleX = glm::orientedAngle(glm::vec3(1.0f, 0.0f, 0.0f), p->orientation, glm::vec3(0.0f, 0.0f, 1.0f));
+	p->angleY = glm::orientedAngle(glm::vec3(0.0f, 1.0f, 0.0f), p->orientation, glm::vec3(0.0f, 0.0f, 1.0f));
+	projectiles.push_back(std::shared_ptr<Projectile>(p));
 }
 
 void Client::removeProjectile(std::string& str)
