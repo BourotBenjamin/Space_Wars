@@ -22,12 +22,12 @@ std::vector<std::string> split(const std::string &s, char delim) {
 void Client::createPlayer(std::string& str)
 {
 	std::vector<std::string> elems = split(str, ';');
-	PlayerGL* p = new PlayerGL();
+	std::shared_ptr<PlayerGL> p = std::shared_ptr<PlayerGL>(new PlayerGL());
 	p->setId(std::stoi(elems.at(1)));
 	float f = std::stof(elems.at(2));
 	p->setPos(std::stof(elems.at(2)), std::stof(elems.at(3)), std::stof(elems.at(4)));
 	p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
-	players.push_back(std::shared_ptr<PlayerGL>(std::move(p)));
+	players.push_back(p);
 }
 
 std::shared_ptr<PlayerGL> Client::getPlayerAt(int index)
@@ -90,7 +90,6 @@ int Client::listenForMessage()
 		if (size > 0)
 		{
 			std::string s(chars, chars + size);
-			std::cout << s << std::endl;
 			char c0 = s.at(0);
 			switch (c0)
 			{
