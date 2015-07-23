@@ -144,7 +144,7 @@ int Server::pingAllClients()
 			if (!c->ping)
 			{
 				c->pingAttemps++;
-				if (c->pingAttemps > 2)
+				if (c->pingAttemps > 5)
 				{
 					removeClientDependencies(c);
 					clientsToRemove.push_back(c);
@@ -172,6 +172,7 @@ int Server::pingAllClients()
 void Server::recivePingFromClient(std::shared_ptr<NetworkClient> c)
 {
 	c->ping = true;
+	c->pingAttemps = 0;
 }
 
 void Server::removeClientDependencies(std::shared_ptr<NetworkClient> c)
@@ -325,7 +326,7 @@ DWORD WINAPI Server::createGameLoop(LPVOID server)
 void Server::gameLoop()
 {
 	float SPEED = 1000.0f;
-	clock_t t;
+	clock_t t, t2;
 	int begin = 0;
 	while (true)
 	{
@@ -359,7 +360,8 @@ void Server::gameLoop()
 				}
 			}
 		}
-		Sleep((166 - (clock() - t))/10);
+		t2 = clock();
+		Sleep((300 - (t2 - t))/10);
 	}
 }
 

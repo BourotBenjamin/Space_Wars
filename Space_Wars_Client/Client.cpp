@@ -21,7 +21,6 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 void Client::createPlayer(std::string& str)
 {
-	std::cout << "lock networking" << std::endl;
 	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<PlayerGL> p = std::shared_ptr<PlayerGL>(new PlayerGL());
@@ -31,7 +30,6 @@ void Client::createPlayer(std::string& str)
 	p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
 	players.push_back(p);
 	cv_m.unlock();
-	std::cout << "unlock networking" << std::endl;
 }
 
 std::shared_ptr<PlayerGL> Client::getPlayerAt(int index)
@@ -46,7 +44,6 @@ std::shared_ptr<PlayerGL> Client::getPlayerAt(int index)
 
 void Client::updatePlayer(std::string& str)
 {
-	std::cout << "lock networking" << std::endl;
 	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<PlayerGL> p = getPlayerAt(std::stoi(elems.at(1)));
@@ -57,18 +54,15 @@ void Client::updatePlayer(std::string& str)
 		p->doRoation(std::stof(elems.at(5)), std::stof(elems.at(6)));
 	}
 	cv_m.unlock();
-	std::cout << "unlock networking" << std::endl;
 }
 
 void Client::removePlayer(std::string& str)
 {
-	std::cout << "lock networking" << std::endl;
 	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	int i = std::stoi(elems.at(1));
 	players.remove_if([i](std::shared_ptr<PlayerGL> p){ return p->getId() == i; });
 	cv_m.unlock();
-	std::cout << "unlock networking" << std::endl;
 }
 
 Client::Client()
@@ -141,7 +135,6 @@ int Client::listenForMessage()
 
 void Client::collision(std::string& str)
 {
-	std::cout << "lock networking" << std::endl;
 	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<PlayerGL> p = getPlayerAt(std::stoi(elems.at(1)));
@@ -151,7 +144,6 @@ void Client::collision(std::string& str)
 	if (p)
 		p->moveBackward();
 	cv_m.unlock();
-	std::cout << "unlock networking" << std::endl;
 }
 
 void Client::sendMessage(std::string message)
@@ -161,7 +153,6 @@ void Client::sendMessage(std::string message)
 
 void Client::createProjectile(std::string& str)
 {
-	std::cout << "lock networking" << std::endl;
 	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	std::shared_ptr<Projectile> p = std::shared_ptr<Projectile>(new Projectile());
@@ -177,19 +168,16 @@ void Client::createProjectile(std::string& str)
 	p->angleY = glm::orientedAngle(glm::vec3(0.0f, 1.0f, 0.0f), p->orientation, glm::vec3(0.0f, 0.0f, 1.0f));
 	projectiles.push_back(std::shared_ptr<Projectile>(p));
 	cv_m.unlock();
-	std::cout << "unlock networking" << std::endl;
 }
 
 void Client::removeProjectile(std::string& str)
 {
-	std::cout << "lock networking" << std::endl;
 	cv_m.lock();
 	std::vector<std::string> elems = split(str, ';');
 	projectiles.remove_if([elems](std::shared_ptr<Projectile> p){
 		return std::stoi(elems.at(2)) == p->id;
 	});
 	cv_m.unlock();
-	std::cout << "unlock networking" << std::endl;
 }
 
 void Client::init()
@@ -222,7 +210,6 @@ void Client::init()
 
 void Client::rotate(float x, float y)
 {
-	std::cout << "lock networking" << std::endl;
 	cv_m.lock();
 	std::shared_ptr<PlayerGL> p = getPlayerAt(selfId);
 	if (p && p->doRoation(x, y))
@@ -234,7 +221,6 @@ void Client::rotate(float x, float y)
 			std::string(";") + std::to_string(selfId));
 	}
 	cv_m.unlock();
-	std::cout << "unlock networking" << std::endl;
 };
 
 void Client::fire()
