@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include "MyGLWidget.h"
 #include <QtGui\qevent.h>
+#include "MainWidget.h"
 
 
 
@@ -16,7 +17,7 @@ void MyGLWidget::initializeGL()
 	setMouseTracking(true);
 	projection.Perspective(45.f, 800, 800, 0.1f, 1000.f);
 	cam = Camera(Point2(0, 0, -7.0f), Point2(0, 0, 0), Point2(0, 1, 0));
-
+	timeDelay = 1.0f / 60;
 	c = new Client();
 
 	ship = new Vaisseau("courbeVertex.vs", "courbeFragment.fs");
@@ -32,7 +33,7 @@ void MyGLWidget::initializeGL()
 	m_z = 0;
 	m_relativeMouse = Point2();
 	cam.lookAt(modelView);
-
+	//mw->start();
 }
 
 void MyGLWidget::initGlDataToDraw()
@@ -60,7 +61,6 @@ void MyGLWidget::paintGL()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	cam.lookAt(modelView);
-	
 	Mat4x4 world;
 	
 	for (auto it = backup.begin(); it != backup.end(); ++it)
@@ -68,29 +68,19 @@ void MyGLWidget::paintGL()
 		std::shared_ptr<PlayerGL> p = (*it);
 		glm::vec3 ppos = p->getPos();
 		world.identity();
-		world.translate(ppos.x, ppos.y, ppos.z);
 		//world.rotateY(-90.f);
+		world.translate(ppos.x, ppos.y, ppos.z);
+		
 		//world.rotateX(p->getAngleX());
 		//world.rotateY(p->getAngleY());
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
 	
-	if (player)
-	{
-		glm::vec3 posplGL = player->getPos();
-		cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
-		if (!entered)
-		{
-			glm::vec3 orplGL = player->getOrientation();
-			cam.orienter(player->getAngleX(), player->getAngleY());
-		}
-		glm::vec3 orplGL = player->getOrientation();
-		cam.deplacer(1, 0, 0);
-		cam.deplacer(1, 0, 0);
-		cam.deplacer(1, 0, 0);
+	glm::vec3 posplGL = player->getPos();
+	cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
+	glm::vec3 orplGL = player->getOrientation();
 
-	}
-
+	
 	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
 	{
 		glm::vec3 ppos = (*it)->position;
@@ -114,10 +104,10 @@ void MyGLWidget::paintGL()
 		lol->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}*/
 	/*world.identity();
-
-	//world.rotateX(90);
-	//world.rotateY(90);
+	//world.rotateX(60);
 	world.translate(1, 0, 4);
+	
+	//world.rotateY(30);
 	ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 
 	world.identity();
@@ -142,10 +132,15 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent * e)
 		m_oldMousePos = Point2(e->x(), e->y(), m_z);
 		entered = true;
 	}
-	m_relativeMouse = Point2();
+	if (e->x() <= 0 || e->x() >= width()-1 || e->y() <= 0 || e->y() >= height()-1)
+	{
+		std::cout << "lol";
+		entered = false;
+	}
+		
 	m_relativeMouse = Point2(e->x() - width() / 2, -e->y() + height() / 2, m_z) - (cam.getPos());
 	
-	//cam.orienter(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
+	cam.orienter(e->x() - m_oldMousePos.Getx(), e->y() - m_oldMousePos.Gety());
 	m_oldMousePos = Point2(e->x(), e->y(), m_z);
 
 	c->rotate((e->x() - m_oldMousePos.Getx())/0.05, (e->y() - m_oldMousePos.Gety())/0.05);
@@ -154,6 +149,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent * e)
 	QCursor::setPos(glob);
 	lastPos = QPoint(width() / 2, height() / 2);
 	QGLWidget::mouseMoveEvent(e);*/
+	repaint();
 }
 
 void MyGLWidget::mouseReleaseEvent(QMouseEvent * e)
@@ -174,6 +170,7 @@ bool MyGLWidget::event(QEvent *e)
 		QKeyEvent *ke = static_cast<QKeyEvent *>(e);
 		if (ke->key() == Qt::Key_Left) {
 			cam.deplacer(2, 0, 0);
+			//cam.orienter(-3, 0);
 			cam.lookAt(modelView);
 			repaint();
 			return true;
@@ -206,3 +203,19 @@ bool MyGLWidget::event(QEvent *e)
 
 	return QWidget::event(e);
 }
+
+void MyGLWidget::gameloop()
+{
+	timeElapsed = 0;
+
+	float currentTime = std::clock() / 1000.f;
+	static float totalTimeDelay = timeDelay + std::clock() / 1000.f;
+	if (currentTime > totalTimeDelay)
+	{
+		totalTimeDelay = timeDelay + std::clock() / 1000.f;
+		c->gameLoopStep(timeDelay);
+		repaint();
+	}
+}
+
+void MyGLWidget::setMainWidget(MainWidget* m){ mw = m; }

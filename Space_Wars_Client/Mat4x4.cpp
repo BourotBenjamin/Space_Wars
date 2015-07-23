@@ -109,8 +109,8 @@ void Mat4x4::rotateY(float angle)
 	float angleRad = angle*M_PI / 180;
 	matrix.identity();
 	matrix.m[0] = std::cosf(angleRad);
-	matrix.m[3] = -std::sinf(angleRad);
-	matrix.m[8] = std::sinf(angleRad);
+	matrix.m[2] = std::sinf(angleRad);
+	matrix.m[8] = -std::sinf(angleRad);
 	matrix.m[10] = std::cosf(angleRad);
 
 	(*this) *= matrix;

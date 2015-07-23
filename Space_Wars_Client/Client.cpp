@@ -230,6 +230,8 @@ void Client::fire()
 
 void Client::gameLoopStep(float micro)
 {
+	if (players.empty())
+		return;
 	for each (auto p in players)
 	{
 		p->updatePos(micro);

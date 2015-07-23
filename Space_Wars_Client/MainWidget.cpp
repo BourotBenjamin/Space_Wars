@@ -19,7 +19,7 @@ MainWidget::MainWidget()
 	hLayout->addLayout(vLayout = new QVBoxLayout);
 	newGL = new MyGLWidget;
 	hLayout->addWidget(newGL);
-
+	newGL->setMainWidget(this);
 	resize(1200, 800);
 }
 
@@ -30,6 +30,7 @@ MainWidget::~MainWidget()
 
 void MainWidget::start()
 {
-
+	while (true)
+		newGL->gameloop();
 }
 

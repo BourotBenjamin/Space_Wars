@@ -7,8 +7,11 @@
 #include <QtOpenGL\qglWidget>
 #include "Mat4x4.h"
 #include "Camera.h"
+#include <chrono>
+#include <ctime>
 
 class Army;
+class MainWidget;
 
 class MyGLWidget : public QGLWidget
 {
@@ -26,6 +29,8 @@ protected:
 	std::shared_ptr<PlayerGL> player;
 
 	QPoint lastPos;
+	MainWidget * mw;
+
 
 	Mat4x4 projection;
 	Mat4x4 modelView;
@@ -41,6 +46,10 @@ protected:
 
 	Army* A;
 	Army* B;
+
+	float timeDelay;
+	float timeElapsed;
+	float totalTimeDelay;
 
 	Camera cam;
 
@@ -61,7 +70,8 @@ public:
 
 	void setArmy(Army * tA, Army * tB){ A = tA; B = tB; }
 	void eventWrapper(QEvent * e){ event(e); }
-
+	void gameloop();
+	void setMainWidget(MainWidget* m);
 
 };
 

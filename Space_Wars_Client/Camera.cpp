@@ -32,7 +32,7 @@ void Camera::orienter(float xRel, float yRel)
 
     else if(m_phi < -89.0)
         m_phi = -89.0;
-
+		
 
     // Conversion des angles en radian
 
