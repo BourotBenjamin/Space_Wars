@@ -15,7 +15,7 @@
 
 struct NetworkClient
 {
-	int id;
+	unsigned short id;
 	glm::vec3 pos;
 	glm::vec3 orientation;
 	SOCKET sock;
@@ -33,7 +33,7 @@ struct NetworkClient
 
 struct Projectile
 {
-	int id;
+	unsigned short id;
 	glm::vec3 position;
 	glm::vec3 orientation;
 	std::shared_ptr<NetworkClient> owner;
@@ -55,7 +55,7 @@ private:
 	SOCKET sock;
 	std::list<std::shared_ptr<NetworkClient>> clients;
 	std::list<std::shared_ptr<Projectile>> projectiles;
-	int nb_clients_all_time = 0, nb_clients = 0, nb_projectiles_all_time = 0;
+	unsigned short nb_clients_all_time = 0, nb_clients = 0, nb_projectiles_all_time = 0;
 	char* chars = (char*)malloc(sizeof(char)* 15);
 
 	static DWORD WINAPI createThreadListenOnServer(LPVOID  client);

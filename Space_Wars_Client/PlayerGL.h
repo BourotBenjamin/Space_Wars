@@ -34,7 +34,7 @@ public:
 		return false;
 	}
 
-	int getId(){return id;}
+	unsigned short getId(){ return id; }
 	void setId(int idd){ id = idd; }
 	void updatePos(float micro)
 	{
@@ -54,7 +54,7 @@ public:
 
 protected:
 
-	int id;
+	unsigned short id;
 	glm::vec3 pos;
 	glm::vec3 orientation;
 	float angleX;

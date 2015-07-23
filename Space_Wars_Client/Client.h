@@ -19,10 +19,10 @@
 
 struct Projectile
 {
-	int id;
+	unsigned short id;
 	glm::vec3 position;
 	glm::vec3 orientation;
-	int owner_id;
+	unsigned short owner_id;
 	float angleX;
 	float angleY;
 };
