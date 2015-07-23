@@ -38,6 +38,8 @@ void MyGLWidget::initializeGL()
 void MyGLWidget::initGlDataToDraw()
 {
 	c->cv_m.lock();
+	backup.clear();
+	backupProj.clear();
 	for (auto it = c->getPlayers().begin(); it != c->getPlayers().end(); ++it)
 	{
 		backup.push_back((*it));
@@ -73,7 +75,7 @@ void MyGLWidget::paintGL()
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
 	
-	/*if (player)
+	if (player)
 	{
 		glm::vec3 posplGL = player->getPos();
 		cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
@@ -87,7 +89,7 @@ void MyGLWidget::paintGL()
 		cam.deplacer(1, 0, 0);
 		cam.deplacer(1, 0, 0);
 
-	}*/
+	}
 
 	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
 	{
