@@ -60,19 +60,20 @@ void MyGLWidget::paintGL()
 	cam.lookAt(modelView);
 	
 	Mat4x4 world;
+	
 	for (auto it = backup.begin(); it != backup.end(); ++it)
 	{
 		std::shared_ptr<PlayerGL> p = (*it);
 		glm::vec3 ppos = p->getPos();
 		world.identity();
 		world.translate(ppos.x, ppos.y, ppos.z);
-		world.rotateY(-90.f);
-		world.rotateX(p->getAngleX());
-		world.rotateY(p->getAngleY());
+		//world.rotateY(-90.f);
+		//world.rotateX(p->getAngleX());
+		//world.rotateY(p->getAngleY());
 		ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}
-
-	if (player)
+	
+	/*if (player)
 	{
 		glm::vec3 posplGL = player->getPos();
 		cam.setPosition(Point2(posplGL.x, posplGL.y, posplGL.z));
@@ -86,7 +87,7 @@ void MyGLWidget::paintGL()
 		cam.deplacer(1, 0, 0);
 		cam.deplacer(1, 0, 0);
 
-	}
+	}*/
 
 	for (auto it = backupProj.begin(); it != backupProj.end(); ++it)
 	{
@@ -111,6 +112,9 @@ void MyGLWidget::paintGL()
 		lol->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 	}*/
 	/*world.identity();
+
+	//world.rotateX(90);
+	//world.rotateY(90);
 	world.translate(1, 0, 4);
 	ship->draw(projection, modelView, world, Point2(1.f, 0.f, 0.f), cam.getPos(), cam.getOrientation());
 
