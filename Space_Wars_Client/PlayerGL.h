@@ -38,7 +38,7 @@ public:
 	void setId(int idd){ id = idd; }
 	void updatePos(float micro)
 	{
-		float SPEED = 1000.0f;
+		float SPEED = 1.0f;
 		pos += orientation * SPEED * (micro / 1000.0f);
 	}
 

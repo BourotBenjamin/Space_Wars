@@ -36,8 +36,7 @@ std::shared_ptr<NetworkClient> Server::initClient(SOCKET csock)
 	c->name = std::string("Visiteur_") + std::to_string(nb_clients_all_time);
 	c->id = nb_clients_all_time;
 	c->pos = glm::vec3(rand() % 50, rand() % 50, rand() % 50);
-	c->orientation = glm::vec3(rand() % 50, rand() % 50, rand() % 50);
-	glm::normalize(c->orientation);
+	c->orientation = glm::normalize(glm::vec3(rand() % 50, rand() % 50, rand() % 50));
 	c->ping = true;
 	c->pingAttemps = 0;
 	clients.push_back(c);
@@ -194,7 +193,7 @@ void Server::updateRotation(std::shared_ptr<NetworkClient> c, std::string str)
 	c->orientation.x = std::stof(elems.at(1));
 	c->orientation.y = std::stof(elems.at(2));
 	c->orientation.z = std::stof(elems.at(3));
-	glm::normalize(c->orientation);
+	c->orientation = glm::normalize(c->orientation);
 }
 
 int Server::listenForMessage(std::shared_ptr<NetworkClient> c)
@@ -325,7 +324,7 @@ DWORD WINAPI Server::createGameLoop(LPVOID server)
 
 void Server::gameLoop()
 {
-	float SPEED = 1000.0f;
+	float SPEED = 1.0f;
 	clock_t t, t2;
 	int begin = 0;
 	while (true)
